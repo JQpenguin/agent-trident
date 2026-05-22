@@ -16,7 +16,7 @@ TRIDENT evaluates tool-use hallucination across three distinct levels:
 | **Level 2** | Static tool planning | Full tool-call sequence |
 | **Level 3** | Dynamic tool execution | ReAct, Reflexion, and Plan-and-Solve trajectories in a deterministic simulator |
 
-> **Note on Data:** The bundled artifact includes `data/ares_benchmark.json`, which is a compact anonymous review split containing 280 samples. These samples cover all seven tool-use structures and all 20 domains.
+> **Note on Data:** The bundled artifact includes `data/ares_benchmark.json`, which is a compact dataset containing 200 samples. These samples cover all seven tool-use structures and all 20 domains.
 
 ---
 
@@ -156,4 +156,3 @@ bash scripts/eval_all.sh "results/infer_results(ares_benchmark)" data/ares_bench
 Afterward, you can inspect the comprehensive summaries and leaderboards located in the respective `eval_all/` and `leaderboard/` directories.
 
 ---
-
