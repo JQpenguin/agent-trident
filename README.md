@@ -1,26 +1,8 @@
-# 🔱 TRIDENT
+# 🔱 Agent-Trident: A Three-Level Progressive Diagnostic Benchmark for Tool-Use Hallucination in LLM Agents
 
-<p align="center">
-  <b>A benchmark for evaluating tool-use hallucination in agentic systems.</b>
-</p>
+TRIDENT is a benchmark for evaluating tool-use hallucination in agentic systems. It tests whether a model can correctly decide task solvability, plan valid tool calls, and execute tool-use trajectories in a deterministic simulator.
 
-<p align="center">
-  <a href="#-overview">🧭 Overview</a> |
-  <a href="#-quick-start-deepseek-v4-pro">🚀 Quick Start</a> |
-  <a href="#-data">📦 Data</a> |
-  <a href="#-run-inference">🤖 Inference</a> |
-  <a href="#-run-evaluation">📊 Evaluation</a> |
-  <a href="#-project-structure">🗂️ Structure</a>
-</p>
-
-TRIDENT evaluates whether an agentic model can correctly judge task solvability, plan valid tool calls, and execute tool-use trajectories in a deterministic simulated environment.
-
-## 🔥 News
-
-- **2026.05**: The anonymized TRIDENT reproduction artifact is released.
-- **2026.05**: DeepSeek v4-pro, local vLLM inference, and unified evaluation scripts are supported.
-
-## 📚 Contents
+## 📌 Table of Contents
 
 - [🧭 Overview](#-overview)
 - [🖼️ Benchmark Figures](#-benchmark-figures)
@@ -32,9 +14,8 @@ TRIDENT evaluates whether an agentic model can correctly judge task solvability,
 - [🧩 Local Open-Source Models with vLLM](#-local-open-source-models-with-vllm)
 - [🗂️ Project Structure](#-project-structure)
 - [📁 Output Structure](#-output-structure)
+- [🧪 Build Your Own Dataset](#-build-your-own-dataset)
 - [🏆 Leaderboard](#-leaderboard)
-- [🧪 Optional Data Generation](#-optional-data-generation)
-- [🩺 Troubleshooting](#-troubleshooting)
 
 ## 🧭 Overview
 
@@ -46,11 +27,9 @@ TRIDENT evaluates tool-use behavior across three levels:
 | **Level 2** | Static tool planning | Full tool-call sequence |
 | **Level 3** | Dynamic tool execution | ReAct, Reflexion, and Plan-Execute trajectories |
 
-The benchmark covers seven tool-use structures and twenty application domains. Each inference script automatically runs Level 1, Level 2, and Level 3.
+The benchmark is designed around seven tool-use structures and twenty application domains. Each inference script runs Level 1, Level 2, and Level 3 automatically.
 
-## 🖼️ Benchmark Figures
-
-### 🏗️ Data Construction Pipeline
+##  🔱TRIDENT three-level diagnostic framework
 
 ![TRIDENT data construction pipeline](./assets/figures/data-construction-pipeline.png)
 
@@ -75,17 +54,13 @@ The repository includes two benchmark files:
 | `data/trident_benchmark.json` | Default 200-sample benchmark file used by the scripts |
 | `data/trident_benchmark_full.json` | Full 1120-sample benchmark split |
 
-If no data path is provided, the inference scripts automatically use `data/trident_benchmark.json`.
+You can use `data/trident_benchmark.json` as a 200-sample split for quick testing, or switch to `data/trident_benchmark_full.json` to evaluate on the full benchmark.
 
 ## 🚀 Quick Start: DeepSeek v4-pro
 
 Run inference and evaluation with DeepSeek v4-pro:
 
 ```bash
-conda create -n trident python=3.10
-conda activate trident
-pip install -r requirements.txt
-
 export DEEPSEEK_API_KEY="your_deepseek_api_key"
 
 bash scripts/infer_all_deepseek-v4-pro.sh
@@ -203,10 +178,10 @@ The local vLLM examples use a `4096` token context window. The request output ca
 ```text
 TRIDENT/
 |-- assets/
-|   `-- figures/                 # README figures
+|   `-- figures/
 |       |-- data-construction-pipeline.png
 |       `-- model-leaderboard.png
-|-- data/                        # Benchmark datasets
+|-- data/
 |   |-- trident_benchmark.json
 |   `-- trident_benchmark_full.json
 |-- prompt/                      # Dataset generation prompts by task type
@@ -241,13 +216,9 @@ The path contains parentheses, so quote it in shell commands:
 bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json deepseek-v4-pro
 ```
 
-## 🏆 Leaderboard
+## 🧪 Build Your Own Dataset
 
-![TRIDENT model leaderboard](./assets/figures/model-leaderboard.png)
-
-## 🧪 Optional Data Generation
-
-The repository keeps a single-step data generation entrypoint:
+You can use the included generation script as a starting point for building your own TRIDENT-style dataset:
 
 ```bash
 export GOOGLE_API_KEY="your_google_api_key"
@@ -255,31 +226,8 @@ export OPENAI_API_KEY="your_openai_api_key"
 bash scripts/generate_single_step.sh
 ```
 
-You can override generation settings with environment variables:
+By default, generated samples are written to `data/single_step_dataset.json`.
 
-```bash
-GENERATOR_PROVIDER=gemini \
-GENERATOR_MODEL=gemini-3.1-pro-preview \
-REVIEW_PROVIDER=openai \
-REVIEW_MODEL=o3 \
-NUM_SAMPLES=20 \
-BATCH_SIZE=10 \
-OUTPUT_NAME=single_step_dataset.json \
-bash scripts/generate_single_step.sh
-```
+## 🏆 Leaderboard
 
-Generated samples are written to `data/single_step_dataset.json`.
-
-## 🩺 Troubleshooting
-
-**DeepSeek model name error.** Use `deepseek-v4-pro` or `deepseek-v4-flash`. The script `scripts/infer_all_deepseek-v4-pro.sh` defaults to `deepseek-v4-pro`.
-
-**Bash path error near `(`.** Quote paths containing parentheses:
-
-```bash
-bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json deepseek-v4-pro
-```
-
-**CRLF script error.** If Bash reports `$'\r': command not found`, convert shell scripts to LF line endings before running them in WSL or Linux.
-
-**vLLM non-JSON response.** Check that the vLLM server is running and that `VLLM_API_URL` points to `/v1/chat/completions`.
+![TRIDENT model leaderboard](./assets/figures/model-leaderboard.png)
