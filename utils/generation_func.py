@@ -722,6 +722,8 @@ class VllmGeneration:
 
         self.model = model
 
+        self.max_tokens = int(os.getenv("VLLM_MAX_TOKENS", "1024"))
+
         self.max_retries = 3
 
         self.base_delay = 2.0
@@ -740,7 +742,7 @@ class VllmGeneration:
 
                 'messages': [{"role": "user", "content": prompt}],
 
-                'max_tokens': 8192,
+                'max_tokens': self.max_tokens,
 
                 'temperature': 0.0,
 
@@ -754,7 +756,20 @@ class VllmGeneration:
 
                 resp = requests.post(self.api_url, headers=headers, json=post_data, timeout=300)
 
-                response = resp.json()
+                try:
+                    response = resp.json()
+                except ValueError as exc:
+                    preview = resp.text[:500].replace("\n", "\\n")
+                    raise RuntimeError(
+                        f"Non-JSON response from vLLM endpoint {self.api_url}: "
+                        f"status={resp.status_code}, content_type={resp.headers.get('content-type')}, "
+                        f"body_preview={preview!r}"
+                    ) from exc
+
+                if resp.status_code >= 400:
+                    raise RuntimeError(
+                        f"HTTP {resp.status_code} from vLLM endpoint {self.api_url}: {response}"
+                    )
 
 
 

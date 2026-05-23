@@ -110,19 +110,19 @@ def count_samples(metrics, subtasks):
 
 
 
-def _compute_gae(ras, l2_task_success, l3_task_success, esu, ppr):
+def _compute_ccm(psa, tsr2, tsr3, ppr2, ppr3):
 
-    if ras <= 0:
+    if psa <= 0:
 
         return 0.0
 
-    product = l2_task_success * l3_task_success * esu * ppr
+    product = tsr2 * tsr3 * ppr2 * ppr3
 
     if product <= 0:
 
         return 0.0
 
-    return ras * (product ** (1 / 4))
+    return psa * (product ** (1 / 4))
 
 
 
@@ -182,7 +182,7 @@ def generate_overall_summary_horizontal(level_data, model_name):
 
         l1 = _normalize_level1_data(level_data["level_1"])
 
-        headers.extend(["L1 EM", "L1 Hallu Rate", "L1 Risk-Adj"])
+        headers.extend(["L1 EM", "L1 Hallu Rate", "L1 PSA"])
 
         row.extend([
 
@@ -248,7 +248,7 @@ def generate_overall_summary_horizontal(level_data, model_name):
 
         headers.extend([
 
-            "L3 Task Succ(S)", "L3 Tool Exact(S)", "L3 Param Acc", "L3 Step Eff(S)", "L3 ACS", "L3 ESU"
+            "L3 TSR", "L3 Tool Exact(S)", "L3 Param Acc", "L3 Step Eff(S)", "L3 ACS", "L3 PPR"
 
         ])
 
@@ -328,7 +328,7 @@ def generate_overall_summary_horizontal(level_data, model_name):
 
     if l1 and l2_data and l3_data:
 
-        gae = _compute_gae(
+        ccm = _compute_ccm(
 
             l1.get("risk_adjusted_score", 0),
 
@@ -336,15 +336,15 @@ def generate_overall_summary_horizontal(level_data, model_name):
 
             l3_data.get("task_success_soft", 0),
 
-            l3_data.get("effective_step_utilization", 0),
-
             l2_data.get("planning_precision", 0),
+
+            l3_data.get("effective_step_utilization", 0),
 
         )
 
-        headers.append("GAE")
+        headers.append("CCM")
 
-        row.append(f"{gae:.2%}")
+        row.append(f"{ccm:.2%}")
 
 
 
@@ -470,7 +470,7 @@ def generate_level3_strategy_comparison(level_data, strategies):
 
     headers = [
 
-        "Strategy", "Task Succ(S)", "Tool Exact(S)", "Param Acc", "Step Eff(S)", "ACS", "ESU"
+        "Strategy", "TSR", "Tool Exact(S)", "Param Acc", "Step Eff(S)", "ACS", "PPR"
 
     ]
 
@@ -528,7 +528,7 @@ def generate_scenario_table(by_scenario):
 
             rows.append([scenario, "Level-1", "Hallucination Rate", f"{l1.get('hallucination_rate', 0):.2%}"])
 
-            rows.append([scenario, "Level-1", "Risk-Adjusted Score", f"{l1.get('risk_adjusted_score', 0):.2%}"])
+            rows.append([scenario, "Level-1", "PSA", f"{l1.get('risk_adjusted_score', 0):.2%}"])
 
 
 
@@ -560,7 +560,7 @@ def generate_scenario_table(by_scenario):
 
             rows.append([scenario, "Level-3", "Agent Capability Score", f"{l3.get('agent_capability_score', 0):.2%}"])
 
-            rows.append([scenario, "Level-3", "Effective Step Utilization", f"{l3.get('effective_step_utilization', 0):.2%}"])
+            rows.append([scenario, "Level-3", "PPR", f"{l3.get('effective_step_utilization', 0):.2%}"])
 
 
 
@@ -634,7 +634,7 @@ def generate_subtask_table(by_subtask):
 
             rows.append([display_name, "Level-1", "Hallucination Rate", f"{l1.get('hallucination_rate', 0):.2%}"])
 
-            rows.append([display_name, "Level-1", "Risk-Adjusted Score", f"{l1.get('risk_adjusted_score', 0):.2%}"])
+            rows.append([display_name, "Level-1", "PSA", f"{l1.get('risk_adjusted_score', 0):.2%}"])
 
 
 
@@ -666,7 +666,7 @@ def generate_subtask_table(by_subtask):
 
             rows.append([display_name, "Level-3", "Agent Capability Score", f"{l3.get('agent_capability_score', 0):.2%}"])
 
-            rows.append([display_name, "Level-3", "Effective Step Utilization", f"{l3.get('effective_step_utilization', 0):.2%}"])
+            rows.append([display_name, "Level-3", "PPR", f"{l3.get('effective_step_utilization', 0):.2%}"])
 
             if "self_correction_rate" in l3:
 
@@ -796,7 +796,7 @@ def generate_domain_table(by_domain):
 
                            f"{l1.get('hallucination_rate', 0):.2%}", sample_count])
 
-                rows.append([display_name, group_name, "L1", "Risk-Adjusted Score",
+                rows.append([display_name, group_name, "L1", "PSA",
 
                            f"{l1.get('risk_adjusted_score', 0):.2%}", sample_count])
 
@@ -846,7 +846,7 @@ def generate_domain_table(by_domain):
 
                            f"{l3.get('agent_capability_score', 0):.2%}", sample_count])
 
-                rows.append([display_name, group_name, "L3", "ESU",
+                rows.append([display_name, group_name, "L3", "PPR",
 
                            f"{l3.get('effective_step_utilization', 0):.2%}", sample_count])
 
@@ -898,7 +898,7 @@ def generate_domain_group_table(by_domain_group):
 
             rows.append([group_name, "L1", "Hallucination Rate", f"{l1.get('hallucination_rate', 0):.2%}", sample_count])
 
-            rows.append([group_name, "L1", "Risk-Adjusted Score", f"{l1.get('risk_adjusted_score', 0):.2%}", sample_count])
+            rows.append([group_name, "L1", "PSA", f"{l1.get('risk_adjusted_score', 0):.2%}", sample_count])
 
 
 
@@ -930,7 +930,7 @@ def generate_domain_group_table(by_domain_group):
 
             rows.append([group_name, "L3", "ACS", f"{l3.get('agent_capability_score', 0):.2%}", sample_count])
 
-            rows.append([group_name, "L3", "ESU", f"{l3.get('effective_step_utilization', 0):.2%}", sample_count])
+            rows.append([group_name, "L3", "PPR", f"{l3.get('effective_step_utilization', 0):.2%}", sample_count])
 
             if "self_correction_rate" in l3:
 
@@ -1149,7 +1149,7 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
                 "hallucination_rate": overall_data.get("Level 1 Hallucination Rate", 0),
 
-                "risk_adjusted_score": overall_data.get("Level 1 Risk-Adjusted Score", 0),
+                "risk_adjusted_score": overall_data.get("Level 1 PSA", 0),
 
             }
 
@@ -1175,7 +1175,7 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
                 "task_success_soft": all_task_success_soft,
 
-                "planning_precision": overall_data.get("Level 2 Planning Precision", 0),
+                "planning_precision": overall_data.get("Level 2 PPR", 0),
 
             }
 
@@ -1199,7 +1199,7 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
                     "hallucination_rate": scenario_data.get("Level 1 Hallucination Rate", 0),
 
-                    "risk_adjusted_score": scenario_data.get("Level 1 Risk-Adjusted Score", 0),
+                    "risk_adjusted_score": scenario_data.get("Level 1 PSA", 0),
 
                 }
 
@@ -1213,7 +1213,7 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
                     "task_success_soft": scenario_data.get("Level 2 Task Success (Soft)", 0),
 
-                    "planning_precision": scenario_data.get("Level 2 Planning Precision", 0),
+                    "planning_precision": scenario_data.get("Level 2 PPR", 0),
 
                 }
 
@@ -1391,7 +1391,7 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
             "agent_capability_score": overall_data.get("Level 3 Agent Capability Score", 0),
 
-            "effective_step_utilization": overall_data.get("Level 3 Effective Step Utilization", 0),
+            "effective_step_utilization": overall_data.get("Level 3 PPR", 0),
 
         }
 
@@ -1451,7 +1451,7 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
                 "agent_capability_score": scenario_data.get("Level 3 Agent Capability Score", 0),
 
-                "effective_step_utilization": scenario_data.get("Level 3 Effective Step Utilization", 0),
+                "effective_step_utilization": scenario_data.get("Level 3 PPR", 0),
 
             }
 
@@ -1559,7 +1559,7 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
             l1_overall = {"exact_match": l1_overall, "risk_adjusted_score": 0}
 
-        summary["overall"]["gae"] = _compute_gae(
+        summary["overall"]["ccm"] = _compute_ccm(
 
             l1_overall.get("risk_adjusted_score", 0),
 
@@ -1567,9 +1567,9 @@ def merge_all_levels(eval_dir, model_name, calculate_type):
 
             l3_overall.get("task_success_soft", 0),
 
-            l3_overall.get("effective_step_utilization", 0),
-
             l2_overall.get("planning_precision", 0),
+
+            l3_overall.get("effective_step_utilization", 0),
 
         )
 
@@ -1897,7 +1897,7 @@ def generate_summary_report(summary, model_name, calculate_type):
 
     lines.append("=" * 80)
 
-    lines.append("                    ARES EVALUATION SUMMARY REPORT")
+    lines.append("                  TRIDENT EVALUATION SUMMARY REPORT")
 
     lines.append("=" * 80)
 
@@ -2073,13 +2073,13 @@ def generate_summary_report(summary, model_name, calculate_type):
 
 def main():
 
-    parser = argparse.ArgumentParser(description="Generate summary report for Ares evaluation")
+    parser = argparse.ArgumentParser(description="Generate summary report for TRIDENT evaluation")
 
     parser.add_argument("--eval_dir", type=str, required=True, help="Base evaluation directory")
 
     parser.add_argument("--model", type=str, default=None, help="Model name")
 
-    parser.add_argument("--calculate_type", type=str, default="hard", help="Calculate type (hard/soft)")
+    parser.add_argument("--calculate_type", type=str, default="soft", help="Calculate type (hard/soft)")
 
     parser.add_argument("--leaderboard", action="store_true", help="Generate cross-model leaderboard only")
 
@@ -2313,7 +2313,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
     print("=" * 80)
 
-    print("                    ARES EVALUATION SUMMARY")
+    print("                  TRIDENT EVALUATION SUMMARY")
 
     print("=" * 80)
 
@@ -2355,9 +2355,9 @@ _LEADERBOARD_HEADERS = [
 
     "Model",
 
-    "GAE",
+    "CCM",
 
-    "L1 HR", "L1 RAS",
+    "L1 HR", "L1 PSA",
 
     "S2", "L2 PPR",
 
@@ -2373,7 +2373,7 @@ _LEADERBOARD_METRIC_MAP = {
 
     "L1 HR":   ("level_1", "hallucination_rate"),
 
-    "L1 RAS":  ("level_1", "risk_adjusted_score"),
+    "L1 PSA":  ("level_1", "risk_adjusted_score"),
 
     "S2":      ("level_2", "task_success_soft"),
 
@@ -2425,7 +2425,7 @@ def generate_leaderboard(results_dir, calculate_type="soft"):
 
         if l1 and l2 and l3:
 
-            row_values["GAE"] = _compute_gae(
+            row_values["CCM"] = _compute_ccm(
 
                 l1.get("risk_adjusted_score", 0),
 
@@ -2433,15 +2433,15 @@ def generate_leaderboard(results_dir, calculate_type="soft"):
 
                 l3.get("task_success_soft", 0),
 
-                l3.get("effective_step_utilization", 0),
-
                 l2.get("planning_precision", 0),
+
+                l3.get("effective_step_utilization", 0),
 
             )
 
         else:
 
-            row_values["GAE"] = 0
+            row_values["CCM"] = 0
 
 
 
@@ -2469,7 +2469,7 @@ def generate_leaderboard(results_dir, calculate_type="soft"):
 
 
 
-    rows.sort(key=lambda r: r[1].get("GAE", 0), reverse=True)
+    rows.sort(key=lambda r: r[1].get("CCM", 0), reverse=True)
 
 
 
@@ -2507,7 +2507,7 @@ def generate_leaderboard(results_dir, calculate_type="soft"):
 
         f.write("ALL MODELS LEADERBOARD\n")
 
-        f.write(f"Sorted by: GAE (descending) | Models: {len(rows)}\n")
+        f.write(f"Sorted by: CCM (descending) | Models: {len(rows)}\n")
 
         f.write("=" * 80 + "\n\n")
 

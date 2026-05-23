@@ -554,20 +554,6 @@ def _process_task_infer_reflexion(task_item, generation_func, args, preloaded_re
 
 
 
-        is_success = _quick_evaluate_trial(trial_result, golden_tools)
-
-
-
-        if is_success:
-
-
-
-            break
-
-
-
-
-
         if trial_num < max_trials - 1:
 
             thoughts = trial_result["thoughts"]
@@ -1119,15 +1105,7 @@ def _extract_action_from_executor(executor_response, planned_call, env_context):
 
 
 
-    if action_str and re.match(r'\w+\(', action_str):
-
-        return action_str
-
-
-
-
-
-    result = planned_call
+    result = action_str if action_str and re.match(r'\w+\(', action_str) else planned_call
 
     for placeholder, value in env_context.items():
 

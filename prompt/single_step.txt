@@ -1,0 +1,99 @@
+﻿Task Description:  
+You need to go ahead and generate samples of agent application demo instance with as much diversity as possible, based on the current dimension, the requirements of the task, and the sample references provided.
+
+Current dimension: single_step: The task involves direct, single-step tool usage where only ONE tool call is needed to fulfill the user's query. The planning phase uses exactly one domain-specific tool followed by the finish tool.
+
+Task Requirement:  
+ - Generate new samples taking into account as much as possible the diversity of user query and available tools.
+ - CRITICAL: The task must be simple enough to be solved with a SINGLE tool call. No conditional branching, no sequential dependencies, no multi-step reasoning required.
+ - The `planning_tools` MUST contain EXACTLY 2 elements: one domain tool call + finish.
+ - The generated sample should be "Solvable" by default.
+ - The samples need to consider a realistic scenario as much as possible.
+ - STRICTLY DIVERSIFY THE AGENT ROLE: Do not use generic roles like "Assistant". You MUST randomly select a specific domain for each sample from list like: [IT Operations, Smart Home IoT, Financial Compliance, Medical Triage, Legal Research, Supply Chain Logistics, Cyber Security, HR Management]. Define a specific job title and specific capabilities corresponding to that domain.
+
+TOOL & PARAMETER CONSTRAINTS (STRICTLY ENFORCE):
+ - Each tool MUST have 1-4 parameters ONLY (never exceed 4 parameters per tool).
+ - All the parameters used must be contained in Env or produced by the tools used before.
+ - Total tools: 2-6 domain-specific tools + UnsolvableQuery + finish.
+ - Keep tools focused and single-purpose (avoid tools that do too many things).
+
+Output Format Requirements (CRITICAL):
+Your output must be a VALID JSON object containing EXACTLY these keys:
+1. "Agent_role": (string)
+2. "Env": (string)
+3. "task": (string)
+4. "tools": (list of strings, 2-6 domain tools + UnsolvableQuery + finish)
+5. "simulation_script": (Dictionary object. MUST NOT BE EMPTY. Must define return values for ALL tools in the tools list except UnsolvableQuery and finish.)
+6. "planning_tools": (list of strings, EXACTLY 2 elements: one tool + finish)
+7. "Solvability": "Solvable"
+
+Note: "id", "domain", and "subtask" fields will be added automatically by the system.
+
+CRITICAL JSON STRING RULES:
+- Do NOT insert line breaks or newlines inside any string value.
+- Each element in "planning_tools" array MUST be a complete, single-line string.
+- Use SINGLE QUOTES for function argument values inside the double-quoted JSON string.
+- CORRECT: "get_weather(city='Beijing')"
+- CORRECT: "finish(result='Weather in Beijing: Sunny, 25°C')"
+- Never split a string across multiple array elements.
+
+At build time, you need to: 
+ First, explicitly select a specific industry domain that is different from previous context. Based on this domain, define a unique Agent_role. Only after the Role is defined, design a SIMPLE task that requires ONLY ONE tool call to complete.
+ Ensure the toolset contains multiple tools (for diversity), but the `planning_tools` (the answer) only uses ONE tool + finish.
+ MANDATORY TOOLS: Every toolset MUST include BOTH of these essential tools:
+   - "UnsolvableQuery(reason)" – Call this when the task cannot be completed due to missing tools, missing arguments, or PERMISSION DENIED.
+   - "finish(result)" – Call this to conclude the task and return the final result to the user. This tool MUST be the last tool in `planning_tools` for all Solvable tasks.
+ In `simulation_script`, explicitly define realistic return values for ALL tools in the `tools` list (except UnsolvableQuery and finish). This ensures a complete simulation environment where every tool has realistic feedback.
+
+Sample Reference: 
+ ==== Reference Sample Start ==== 
+----Begin sign----
+{
+  "Agent_role": "Role: Weather_Service_Agent",
+  "Env": "Service Region: 'Beijing'; Time: Morning; User Device: Mobile App;",
+  "task": "Get the current weather conditions for Beijing.",
+  "tools": [
+    "get_weather(city) – Returns current weather conditions for the specified city.",
+    "get_forecast(city, days) – Returns weather forecast for specified number of days.",
+    "set_weather_alert(city, condition) – Sets an alert for specific weather condition.",
+    "UnsolvableQuery(reason) – Reports failure.",
+    "finish(result) – Concludes the task and returns final result."
+  ],
+  "simulation_script": {
+    "get_weather": {
+      "return_value": "Sunny, 25°C, Humidity 45%",
+      "observation": "Current weather in Beijing: Sunny, 25°C, Humidity 45%"
+    },
+    "get_forecast": {
+      "return_value": "3-day forecast retrieved",
+      "observation": "Forecast for Beijing: Day 1-Sunny, Day 2-Cloudy, Day 3-Rain"
+    },
+    "set_weather_alert": {
+      "return_value": "Alert-Set-001",
+      "observation": "Weather alert has been set for the specified condition."
+    }
+  },
+  "planning_tools": [
+    "get_weather(city='Beijing')",
+    "finish(result='Current weather in Beijing: Sunny, 25°C, Humidity 45%')"
+  ],
+  "Solvability": "Solvable"
+}
+----End sign----
+==== Reference Sample End ==== 
+
+ Now, please combine the reference sample and the corresponding build steps, try to select tasks from different domains and scenarios. We start generating new single samples corresponding to the dimensions. Single-step tool using dimension generation sample (one): 
+
+⚠️ CRITICAL OUTPUT FORMAT REQUIREMENT:
+Your output must strictly begin with the "----Begin sign----" and end with the "----End sign----" like the reference sample.
+Do NOT wrap the output in markdown code blocks (no ```json or ``` tags).
+Output ONLY the raw JSON between the Begin/End markers.
+Ensure the JSON is valid and simulation_script is populated.
+
+⚠️ SINGLE-STEP CONSTRAINT REMINDER:
+- planning_tools MUST have EXACTLY 2 elements.
+- First element: ONE domain tool call.
+- Second element: finish(result='...').
+- NO multi-step reasoning, NO sequential dependencies.
+
+ ==== Sample Start ====

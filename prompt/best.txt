@@ -1,0 +1,74 @@
+﻿Task Description:  
+You need to go ahead and generate samples of agent application demo instance with as much diversity as possible, based on the current dimension, the requirements of the task, and the sample references provided.
+
+Current dimension: best: The task provides MULTIPLE tools with OVERLAPPING functionality (2-3 tools that can all achieve the same goal), but each tool has different strengths, weaknesses, and trade-offs. The task description includes SPECIFIC CONSTRAINTS or priorities (e.g., speed, accuracy, language support, resource limits, domain specialization) that make ONE tool clearly superior. The agent must analyze the constraints and SELECT the optimal tool.
+
+Task Requirement:  
+ - Generate new samples taking into account as much as possible the diversity of user query and available tools.
+ - KEY DISTINCTION: In single_step / multi_step dimensions, tools serve DIFFERENT functions and no choice is needed per step. In best, multiple tools serve the SAME function but with different trade-offs, so the agent must compare and select the best one based on task constraints.
+ - STRICTLY DIVERSIFY THE AGENT ROLE: Do not use generic roles like "Assistant". You MUST randomly select a specific domain from: [IT Operations, Smart Home IoT, Financial Compliance, Medical Triage, Legal Research, Supply Chain Logistics, Cyber Security, HR Management, Data Engineering, Energy Management, E-Commerce, Scientific Research]. Define a specific, non-generic Agent Role.
+ - COMPETING TOOL DESIGN (CRITICAL): The toolset MUST contain 2-3 tools with overlapping/similar functionality. They can all perform the same core task, but each competing tool MUST have clearly described strengths and weaknesses.
+ - Each competing tool should differ in at least 2 dimensions, such as speed, accuracy, domain specialization, language support, resource usage, scale, or format support.
+ - CONSTRAINT-BASED SELECTION (CRITICAL): The task description MUST include explicit constraints or priorities that clearly favor ONE tool over the others. The optimal choice must be logically derivable, not arbitrary.
+ - GOOD constraints: "needs highest accuracy for Chinese text", "must process within 5 minutes on a laptop with 4GB RAM", "requires legal-domain specialized analysis".
+ - BAD constraints: "just analyze the data" (no selection criteria), "use the best tool" (circular).
+ - The `planning_tools` list must use ONLY the SELECTED optimal tool for the competing step. Rejected competing tools stay in the tools list but are NOT called.
+ - The generated sample should be "Solvable" by default.
+ - The samples need to consider a realistic scenario as much as possible.
+
+TOOL & PARAMETER CONSTRAINTS (STRICTLY ENFORCE):
+ - Each tool MUST have 1-4 parameters ONLY (never exceed 4 parameters per tool).
+ - All the parameters used must be contained in Env or produced by the tools used before.
+ - Total tools: 4-7 domain-specific tools (including 2-3 competing tools + 1-3 other utility tools) + UnsolvableQuery + finish.
+ - Keep tools focused and single-purpose (avoid tools that do too many things).
+ - The `planning_tools` list must contain 2-4 domain tool calls plus the final `finish` call. Use the OPTIMAL tool for the competing step, plus any pre/post-processing utility tools needed to reach the required workflow complexity.
+
+Output Format Requirements (CRITICAL):
+Your output must be a VALID JSON object containing EXACTLY these keys:
+1. "Agent_role": (string)
+2. "Env": (string)
+3. "task": (string, MUST include explicit constraints/priorities for tool selection)
+4. "tools": (list of strings, function signatures with performance characteristics clearly described)
+5. "simulation_script": (Dictionary object. MUST NOT BE EMPTY. Must define return values for ALL tools, including non-selected competing tools, except UnsolvableQuery and finish.)
+6. "planning_tools": (list of strings, 2-4 domain tool calls + finish, using ONLY the optimal competing tool)
+7. "Solvability": "Solvable"
+
+Note: "id", "domain", and "subtask" fields will be added automatically by the system.
+
+CRITICAL JSON STRING RULES:
+- Do NOT insert line breaks or newlines inside any string value.
+- Each element in "planning_tools" array MUST be a complete, single-line string.
+- Use SINGLE QUOTES for function argument values inside the double-quoted JSON string.
+- CORRECT: "analyze_sentiment_deep(text_batch='reviews_q3.csv', language='zh-CN', context_depth='full')"
+- CORRECT: "finish(result='Sentiment analysis complete with 99% accuracy.')"
+- Never split a string across multiple array elements.
+
+At build time, you need to: 
+ First, explicitly select a specific industry domain that is different from previous context. Based on this domain, define a unique Agent_role. Only after the Role is defined, design a task where the goal includes SPECIFIC constraints (speed, accuracy, resource, language, domain expertise, scale) that create a clear preference for one tool.
+ Design 2-3 COMPETING tools with overlapping functionality but different trade-off profiles. Make each tool's strengths and weaknesses explicit in the description. Also include 1-3 utility tools for pre/post-processing steps.
+ MANDATORY TOOLS: Every toolset MUST include BOTH of these essential tools:
+   - "UnsolvableQuery(reason)" – Call this when the task cannot be completed due to missing tools, missing arguments, or PERMISSION DENIED.
+   - "finish(result)" – Call this to conclude the task and return the final result to the user. This tool MUST be the last tool in `planning_tools` for all Solvable tasks.
+ In `simulation_script`, define realistic return values for ALL tools (including competing tools not selected in planning). In `planning_tools`, ONLY use the optimal competing tool that best matches the task constraints.
+
+Sample Reference: 
+Reference Sample (Study this pattern strictly — note how competing tools exist but only the OPTIMAL one is used):
+----Begin sign---- { "Agent_role": "Role: Senior NLP Data Analyst at GlobalVoice Analytics", "Env": "Organization: GlobalVoice Analytics (multinational). Dataset: 'customer_reviews_q3.csv' (500 reviews). Language: Mandarin Chinese. Deployment: On-premise server, 8GB RAM, no GPU. Priority: Accuracy over speed for nuanced cultural expressions.", "task": "Analyze the sentiment of 500 customer reviews written in Mandarin Chinese. The analysis must capture nuanced cultural expressions and implicit sentiment (e.g., sarcasm, understatement). Accuracy is the top priority; processing time is not a concern. The system has 8GB RAM and no GPU available.", "tools": [ "basic_keyword_sentiment(text_file, language) – Fast keyword-matching sentiment analyzer. Speed: 1000 reviews/min. Accuracy: 92% English, 68% Chinese. RAM: 512MB. No GPU needed.", "deep_context_sentiment(text_file, language, context_mode) – Transformer-based deep sentiment model with cultural context understanding. Speed: 40 reviews/min. Accuracy: 98% English, 96% Chinese (including sarcasm and understatement). RAM: 6GB. No GPU needed (CPU inference).", "multilingual_sentiment_lite(text_file) – Lightweight multilingual model supporting 45 languages. Speed: 200 reviews/min. Accuracy: 85% across all languages. RAM: 1GB. No GPU needed.", "export_analysis_report(analysis_data, format) – Exports sentiment analysis results to a specified format (CSV, PDF, JSON).", "UnsolvableQuery(reason) – Reports failure due to missing permissions, data, or tools.", "finish(result) – Concludes the task and returns final result." ], "simulation_script": { "basic_keyword_sentiment": { "return_value": "Completed: 500 reviews processed. Positive: 180, Negative: 220, Neutral: 100. Warning: 68% confidence on Chinese text — many cultural idioms unrecognized.", "observation": "Fast but low accuracy on Chinese. Many nuanced expressions missed." }, "deep_context_sentiment": { "return_value": "Completed: 500 reviews processed in 12.5 minutes. Positive: 210, Negative: 195, Neutral: 95. Cultural context detected: 47 sarcasm instances, 31 understatements. Confidence: 96%.", "observation": "High accuracy with cultural nuance detection. Identified sarcasm and understatement patterns." }, "multilingual_sentiment_lite": { "return_value": "Completed: 500 reviews processed. Positive: 195, Negative: 205, Neutral: 100. Confidence: 85%.", "observation": "Moderate accuracy. Some cultural nuances missed but better than keyword approach." }, "export_analysis_report": { "return_value": "Report exported: sentiment_report_q3.pdf (2.3MB)", "observation": "Analysis report generated successfully." } }, "planning_tools": [ "deep_context_sentiment(text_file='customer_reviews_q3.csv', language='zh-CN', context_mode='cultural_nuance')", "export_analysis_report(analysis_data='sentiment_results', format='PDF')", "finish(result='Sentiment analysis complete. 500 Chinese reviews analyzed with 96% accuracy using deep context model. Results: 210 positive, 195 negative, 95 neutral. Detected 47 sarcasm and 31 understatement instances. Report exported as sentiment_report_q3.pdf.')" ], "Solvability": "Solvable" } ----End sign----
+ Now, please combine the reference sample and the corresponding build steps, try to select tasks from different domains and scenarios. We start generating new single samples corresponding to the dimensions. Optimal tool selection dimension generation sample (one): 
+
+⚠️ CRITICAL OUTPUT FORMAT REQUIREMENT:
+Your output must strictly begin with the "----Begin sign----" and end with the "----End sign----" like the reference sample.
+Do NOT wrap the output in markdown code blocks (no ```json or ``` tags).
+Output ONLY the raw JSON between the Begin/End markers.
+Ensure the JSON is valid and simulation_script is populated.
+
+⚠️ OPTIMAL TOOL SELECTION CONSTRAINT REMINDER:
+- The tools list MUST contain 2-3 COMPETING tools with OVERLAPPING functionality but DIFFERENT trade-offs.
+- Each competing tool description MUST explicitly state its strengths AND weaknesses (speed, accuracy, resource usage, domain specialization, etc.).
+- The task description MUST include SPECIFIC constraints that clearly favor ONE tool.
+- planning_tools MUST ONLY use the OPTIMAL competing tool; rejected competing tools stay in tools list but are NOT called.
+- simulation_script MUST define return values for ALL tools, including non-selected competing tools.
+- Last element in planning_tools MUST be finish(result='...').
+
+ ==== Sample Start ====
+

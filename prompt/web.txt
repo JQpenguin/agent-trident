@@ -1,0 +1,116 @@
+﻿Task Description:  
+You need to go ahead and generate samples of agent application demo instance with as much diversity as possible, based on the current dimension, the requirements of the task, and the sample references provided.
+
+Current dimension: web: The task involves operations in a web-related environment, including but not limited to web content retrieval, web data collection, website usability evaluation, website security assessment, web API interaction, shopping price comparison, SEO analysis, web performance monitoring, web scraping, and website optimization. The Agent must use web-specific tools to accomplish the task.
+
+Task Requirement:  
+ - Generate new samples taking into account as much as possible the diversity of user query and available tools.
+ - CRITICAL: The task MUST be set in a web-related environment. The tools should interact with websites, web APIs, web pages, or web services.
+ - The task should require 2-5 tool calls to complete (excluding finish).
+ - The generated sample should be "Solvable" by default.
+ - The samples need to consider a realistic scenario as much as possible.
+ - STRICTLY DIVERSIFY THE AGENT ROLE: Do not use generic roles like "Assistant". You MUST randomly select a specific domain for each sample from list like: [IT Operations, Smart Home IoT, Financial Compliance, Medical Triage, Legal Research, Supply Chain Logistics, Cyber Security, HR Management, E-Commerce, SEO Specialist, Web Developer, Data Analyst]. Define a specific job title and specific capabilities corresponding to that domain.
+ - WEB ENVIRONMENT SCENARIOS: Choose from web scraping/data extraction, website performance testing, web security scanning, SEO analysis, web API interaction, shopping price comparison, website accessibility compliance checking, DNS/WHOIS/domain health checks, web content monitoring, or browser automation tasks.
+
+TOOL & PARAMETER CONSTRAINTS (STRICTLY ENFORCE):
+ - Each tool MUST have 1-4 parameters ONLY (never exceed 4 parameters per tool).
+ - All the parameters used must be contained in Env or produced by the tools used before.
+ - Total tools: 3-7 domain-specific web tools + UnsolvableQuery + finish.
+ - Keep tools focused and single-purpose (avoid tools that do too many things).
+ - Tools should be web-specific, e.g., fetch_page(), check_ssl_cert(), scan_port(), get_dns_record(), crawl_sitemap(), check_page_speed().
+ - The `planning_tools` list should contain 2-5 web tool calls + finish.
+
+Output Format Requirements (CRITICAL):
+Your output must be a VALID JSON object containing EXACTLY these keys:
+1. "Agent_role": (string)
+2. "Env": (string, MUST include web-related context such as URL, domain name, website, or API endpoint)
+3. "task": (string)
+4. "tools": (list of strings, 3-7 domain web tools + UnsolvableQuery + finish)
+5. "simulation_script": (Dictionary object. MUST NOT BE EMPTY. Must define return values for ALL tools in the tools list except UnsolvableQuery and finish.)
+6. "planning_tools": (list of strings, 2-5 web tool calls + finish)
+7. "Solvability": "Solvable"
+
+Note: "id", "domain", and "subtask" fields will be added automatically by the system.
+
+CRITICAL JSON STRING RULES:
+- Do NOT insert line breaks or newlines inside any string value.
+- Each element in "planning_tools" array MUST be a complete, single-line string.
+- Use SINGLE QUOTES for function argument values inside the double-quoted JSON string.
+- CORRECT: "fetch_page(url='https://example.com')"
+- CORRECT: "finish(result='Page analysis completed: load time 2.3s, status 200')"
+- Never split a string across multiple array elements.
+
+At build time, you need to: 
+ First, explicitly select a specific web-related scenario that is different from previous context. Based on this scenario, define a unique Agent_role. Only after the Role is defined, design a task that requires interacting with the web environment.
+ Give an overall task first, then express the specific task requirements separately, and make sure that they are as relevant to the web environment as possible.
+ In the list of available tools, provide tools that can accomplish these requirements, while including a small number of tools that do not directly help the task to ensure task complexity and tool diversity.
+ MANDATORY TOOLS: Every toolset MUST include BOTH of these essential tools:
+   - "UnsolvableQuery(reason)" – Call this when the task cannot be completed due to missing tools, missing arguments, or PERMISSION DENIED.
+   - "finish(result)" – Call this to conclude the task and return the final result to the user. This tool MUST be the last tool in `planning_tools` for all Solvable tasks.
+ In `simulation_script`, explicitly define realistic return values for ALL tools in the `tools` list (except UnsolvableQuery and finish). Use realistic web data in return values, such as HTTP status codes, HTML snippets, JSON responses, SSL certificate details, DNS records, or page-speed metrics.
+
+Sample Reference: 
+ ==== Reference Sample Start ==== 
+----Begin sign----
+{
+  "Agent_role": "Role: Web Security Analyst at CyberGuard Solutions",
+  "Env": "Target Website: 'https://shop.example.com'; Organization: RetailMax Inc.; Scan Window: 2025-01-15 02:00-04:00 UTC; Compliance Standard: PCI-DSS; Report ID: SCAN-7821;",
+  "task": "Perform a security assessment on https://shop.example.com: First check the SSL certificate validity, then scan for open ports, and finally run a basic vulnerability scan. Compile the results into a summary.",
+  "tools": [
+    "check_ssl_cert(url) – Returns SSL certificate details including issuer, expiry date, and validity status.",
+    "scan_ports(target_host, port_range) – Scans specified port range and returns open ports with service names.",
+    "run_vuln_scan(url, scan_type) – Runs a vulnerability scan (basic/deep) and returns findings.",
+    "fetch_http_headers(url) – Returns HTTP response headers for analysis.",
+    "check_dns_record(domain, record_type) – Queries DNS records for the specified domain.",
+    "UnsolvableQuery(reason) – Reports failure.",
+    "finish(result) – Concludes the task and returns final result."
+  ],
+  "simulation_script": {
+    "check_ssl_cert": {
+      "return_value": "Issuer: Let's Encrypt, Valid: true, Expiry: 2025-04-15, Protocol: TLS 1.3",
+      "observation": "SSL certificate for shop.example.com is valid, issued by Let's Encrypt, expires 2025-04-15."
+    },
+    "scan_ports": {
+      "return_value": "Open ports: 80(HTTP), 443(HTTPS), 3306(MySQL)",
+      "observation": "Port scan complete. Found 3 open ports. WARNING: MySQL port 3306 is exposed to the internet."
+    },
+    "run_vuln_scan": {
+      "return_value": "Findings: 1 High (exposed MySQL), 2 Medium (outdated jQuery, missing CSP header), 0 Low",
+      "observation": "Vulnerability scan found 3 issues. Critical: MySQL port publicly accessible."
+    },
+    "fetch_http_headers": {
+      "return_value": "Server: nginx/1.24, X-Frame-Options: SAMEORIGIN, Content-Security-Policy: not set",
+      "observation": "HTTP headers retrieved. Missing Content-Security-Policy header."
+    },
+    "check_dns_record": {
+      "return_value": "A: 203.0.113.50, MX: mail.example.com, TXT: v=spf1 include:_spf.google.com ~all",
+      "observation": "DNS records retrieved for example.com."
+    }
+  },
+  "planning_tools": [
+    "check_ssl_cert(url='https://shop.example.com')",
+    "scan_ports(target_host='shop.example.com', port_range='1-1024')",
+    "run_vuln_scan(url='https://shop.example.com', scan_type='basic')",
+    "finish(result='Security assessment complete for shop.example.com. SSL: Valid (TLS 1.3, expires 2025-04-15). Ports: 80, 443, 3306 open — MySQL exposed. Vulnerabilities: 1 High (exposed MySQL), 2 Medium (outdated jQuery, missing CSP). Recommend: restrict port 3306 and add CSP header.')"
+  ],
+  "Solvability": "Solvable"
+}
+----End sign----
+==== Reference Sample End ==== 
+
+ Now, please combine the reference sample and the corresponding build steps, try to select tasks from different domains and scenarios. We start generating new single samples corresponding to the dimensions. Web environment constraint dimension generation sample (one): 
+
+⚠️ CRITICAL OUTPUT FORMAT REQUIREMENT:
+Your output must strictly begin with the "----Begin sign----" and end with the "----End sign----" like the reference sample.
+Do NOT wrap the output in markdown code blocks (no ```json or ``` tags).
+Output ONLY the raw JSON between the Begin/End markers.
+Ensure the JSON is valid and simulation_script is populated.
+
+⚠️ WEB ENVIRONMENT CONSTRAINT REMINDER:
+- The task MUST involve web-related operations (websites, URLs, web APIs, etc.).
+- Tools MUST interact with web resources.
+- Env MUST contain web-related context (URLs, domains, endpoints, etc.).
+- Use realistic web data in simulation_script return values.
+- Last element in planning_tools MUST be finish(result='...').
+
+ ==== Sample Start ====

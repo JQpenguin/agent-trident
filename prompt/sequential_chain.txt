@@ -1,0 +1,105 @@
+﻿Task Description:  
+You need to go ahead and generate samples of agent application demo instance with as much diversity as possible, based on the current dimension, the requirements of the task, and the sample references provided.
+
+Current dimension: sequential_chain: The task involves a multi-step process where the output of the previous tool call MUST be used as the input argument for the next tool call (Strong Parameter Dependency).
+
+Task Requirement:  
+ - Generate new samples taking into account as much as possible the diversity of user query and available tools.
+ - First, ensure that the task requires a dependency chain to accomplish (e.g., Step 1 finds an ID, Step 2 uses that ID).
+ - CRITICAL: You must pre-fabricate the intermediate data (e.g., a specific ID like 'USR-999' or a filename like 'log.txt'). The first tool must return this value in the simulation script, and the second tool MUST explicitly use this value as an input argument in the planning phase.
+ - Do NOT use variables like '<output_of_step_1>' in `planning_tools`; use the actual value defined in `simulation_script` (e.g., 'ORD-123').
+ - The samples need to consider a realistic scenario as much as possible.
+ - Multiple tools need to be provided in the raw input. In this dimension, the raw output uses multiple tools to fulfill the user's query in the planning phase, corresponding to multi-step tool using. In the invocation process, different tools are used in each step, corresponding to w/o Repetition.
+ - STRICTLY DIVERSIFY THE AGENT ROLE: Do not use generic roles like "Assistant" or "Travel Planner". You MUST randomly select a specific domain from: [IT Operations, Smart Home IoT, Financial Compliance, Medical Triage, Legal Research, Supply Chain Logistics, Cyber Security, HR Management]. Define a specific job title and specific capabilities corresponding to that domain.
+ - The generated sample should be "Solvable" by default.
+
+TOOL & PARAMETER CONSTRAINTS (STRICTLY ENFORCE):
+ - Each tool MUST have 1-4 parameters ONLY (never exceed 4 parameters per tool).
+ - All the parameters used must be contained in Env or produced by the tools used before.
+ - Total tools: 2-6 domain-specific tools + UnsolvableQuery + finish.
+ - Keep tools focused and single-purpose (avoid tools that do too many things).
+ - The tools used in `planning_tools` should be different, and the output of one tool MUST be hard-coded as the input argument of the next dependent tool.
+
+Output Format Requirements (CRITICAL):
+Your output must be a VALID JSON object containing EXACTLY these keys:
+1. "Agent_role": (string)
+2. "Env": (string)
+3. "task": (string)
+4. "tools": (list of strings, 2-6 domain tools + UnsolvableQuery + finish)
+5. "simulation_script": (Dictionary object. MUST NOT BE EMPTY. Must define return values for ALL tools in the tools list except UnsolvableQuery and finish, especially the bridge data returned by the first tool.)
+6. "planning_tools": (list of strings, multi-step dependency chain + finish, using actual intermediate values from simulation_script)
+7. "Solvability": "Solvable"
+
+Note: "id", "domain", and "subtask" fields will be added automatically by the system.
+
+CRITICAL JSON STRING RULES:
+- Do NOT insert line breaks or newlines inside any string value.
+- Each element in "planning_tools" array MUST be a complete, single-line string.
+- Use SINGLE QUOTES for function argument values inside the double-quoted JSON string.
+- CORRECT: "find_log_path(server_name='Prod-DB-01', incident_type='crash')"
+- CORRECT: "finish(result='Log analysis completed')"
+- Never split a string across multiple array elements.
+
+At build time, you need to: 
+ First, explicitly select a specific industry domain that is different from previous context. Based on this domain, define a unique Agent_role with specific capabilities and permissions. Only after the Role is defined, design a task and toolset that fits this specific character.
+ Design a dependency chain where Step 1 returns a concrete bridge value in `simulation_script`, and Step 2 hard-codes that exact returned value as an argument. Additional steps may continue the chain in the same way.
+ Include a small number of tools that do not directly contribute to the task to ensure task complexity and tool diversity.
+ MANDATORY TOOLS: Every toolset MUST include BOTH of these essential tools:
+   - "UnsolvableQuery(reason)" – Call this when the task cannot be completed due to missing tools, missing arguments, or PERMISSION DENIED.
+   - "finish(result)" – Call this to conclude the task and return the final result to the user. This tool MUST be the last tool in `planning_tools` for all Solvable tasks.
+ In `simulation_script`, explicitly define realistic return values for ALL tools in the `tools` list (except UnsolvableQuery and finish). The first tool's return value MUST include the bridge data used by the next tool call.
+
+Sample Reference: 
+ ==== Reference Sample Start ==== 
+----Begin sign----
+{
+  "Agent_role": "Role: SysAdmin",
+  "Env": "Server: 'Prod-DB-01'; Incident_Time: '10:00 AM';",
+  "task": "Find the error log file path for the latest crash on Prod-DB-01 and read its last 5 lines.",
+  "tools": [
+    "find_log_path(server_name, incident_type) – Returns the full file path of the log.",
+    "read_file(file_path, lines) – Reads specific lines from a file.",
+    "archive_log(file_path) – Archives a log file to backup storage.",
+    "UnsolvableQuery(reason) – Reports failure.",
+    "finish(result) – Concludes the task and returns final result."
+  ],
+  "simulation_script": {
+    "find_log_path": {
+      "return_value": "/var/log/db_crash_2024.log",
+      "observation": "Found log at: /var/log/db_crash_2024.log"
+    },
+    "read_file": {
+      "return_value": "Error: Connection Timeout...",
+      "observation": "Last 5 lines: [Critical] Connection Timeout..."
+    },
+    "archive_log": {
+      "return_value": "Archived to /backup/db_crash_2024.log.gz",
+      "observation": "Log file archived successfully."
+    }
+  },
+  "planning_tools": [
+    "find_log_path(server_name='Prod-DB-01', incident_type='crash')",
+    "read_file(file_path='/var/log/db_crash_2024.log', lines=5)",
+    "finish(result='Last 5 lines of crash log: [Critical] Connection Timeout...')"
+  ],
+  "Solvability": "Solvable"
+}
+----End sign----
+==== Reference Sample End ==== 
+
+ Now, please combine the reference sample and the corresponding build steps, try to select tasks from different domains and scenarios. We start generating new single samples corresponding to the dimensions. Sequential chain dimension generation sample (one): 
+
+⚠️ CRITICAL OUTPUT FORMAT REQUIREMENT:
+Your output must strictly begin with the "----Begin sign----" and end with the "----End sign----" like the reference sample.
+Do NOT wrap the output in markdown code blocks (no ```json or ``` tags).
+Output ONLY the raw JSON between the Begin/End markers.
+Ensure the JSON is valid and simulation_script is populated.
+
+⚠️ SEQUENTIAL CHAIN CONSTRAINT REMINDER:
+- The task MUST require a dependency chain.
+- The first tool MUST return concrete bridge data in simulation_script.
+- The next tool call MUST hard-code that exact bridge data as an argument.
+- Do NOT use placeholder variables like '<output_of_step_1>'.
+- Last element in planning_tools MUST be finish(result='...').
+
+ ==== Sample Start ====

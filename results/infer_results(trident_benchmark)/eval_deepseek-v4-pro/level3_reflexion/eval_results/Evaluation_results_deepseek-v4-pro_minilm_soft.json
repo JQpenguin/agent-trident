@@ -1,0 +1,143 @@
+{
+    "sub_task_results": {
+        "single_step": {
+            "level_3": {
+                "task_success_soft": 1.0,
+                "tool_call_exact_soft": 1.0,
+                "parameter_accuracy": 1.0,
+                "step_efficiency_soft": 0.5,
+                "agent_capability_score": 0.5,
+                "effective_step_utilization": 0.5,
+                "self_correction_rate": 0.0
+            }
+        }
+    },
+    "group_results": {
+        "Solvable": {
+            "Level 3 Task Success (Soft)": 1.0,
+            "Level 3 Tool Exact (Soft)": 1.0,
+            "Level 3 Parameter Accuracy": 1.0,
+            "Level 3 Step Efficiency (Soft)": 0.5,
+            "Level 3 Agent Capability Score": 0.5,
+            "Level 3 PPR": 0.5,
+            "Level 3 Self-Correction Rate": 0.0,
+            "token_usage": {
+                "total_prompt_tokens": 4621,
+                "total_completion_tokens": 2845,
+                "total_tokens": 7466,
+                "avg_prompt_tokens": 4621.0,
+                "avg_completion_tokens": 2845.0,
+                "sample_count": 1
+            }
+        },
+        "Unsolvable": {
+            "Level 3 Task Success (Soft)": 0.0,
+            "Level 3 Tool Exact (Soft)": 0.0,
+            "Level 3 Parameter Accuracy": 0.0,
+            "Level 3 Step Efficiency (Soft)": 0.0,
+            "Level 3 Agent Capability Score": 0.0,
+            "Level 3 PPR": 0.0
+        },
+        "overall": {
+            "Level 3 Task Success (Soft)": 1.0,
+            "Level 3 Tool Exact (Soft)": 1.0,
+            "Level 3 Parameter Accuracy": 1.0,
+            "Level 3 Step Efficiency (Soft)": 0.5,
+            "Level 3 Agent Capability Score": 0.5,
+            "Level 3 PPR": 0.5,
+            "Level 3 Self-Correction Rate": 0.0,
+            "token_usage": {
+                "total_prompt_tokens": 4621,
+                "total_completion_tokens": 2845,
+                "total_tokens": 7466,
+                "avg_prompt_tokens": 4621.0,
+                "avg_completion_tokens": 2845.0,
+                "sample_count": 1
+            }
+        }
+    },
+    "analysis_results": {
+        "LeveL 3 / Solvable": {
+            "Non-existent Tools": 0,
+            "Solvability Hallucination": 0,
+            "False Unsolvable": 0,
+            "Missing Tools": 0,
+            "Incorrect Tools": 0,
+            "Missing Params": 0,
+            "Wrong Param Value": 0,
+            "No Answer": 0,
+            "Correct": 0,
+            "Redundant Steps": 1,
+            "Unknown Error": 0
+        },
+        "LeveL 3 / Unsolvable": {
+            "Non-existent Tools": 0,
+            "Solvability Hallucination": 0,
+            "False Unsolvable": 0,
+            "Missing Tools": 0,
+            "Incorrect Tools": 0,
+            "Missing Params": 0,
+            "Wrong Param Value": 0,
+            "No Answer": 0,
+            "Correct": 0,
+            "Redundant Steps": 0,
+            "Unknown Error": 0
+        },
+        "LeveL 3 / Overall": {
+            "Non-existent Tools": 0,
+            "Solvability Hallucination": 0,
+            "False Unsolvable": 0,
+            "Missing Tools": 0,
+            "Incorrect Tools": 0,
+            "Missing Params": 0,
+            "Wrong Param Value": 0,
+            "No Answer": 0,
+            "Correct": 0,
+            "Redundant Steps": 1,
+            "Unknown Error": 0
+        },
+        "Level 3 / Execution Hallucination": {
+            "total_samples": 1,
+            "tool_fabrication_rate": 0.0,
+            "missing_tool_rate": 0.0,
+            "completion_hallucination_rate": 0.0,
+            "extra_step_rate": 0.0,
+            "counts": {
+                "fabrication": 0,
+                "missing_tools": 0,
+                "not_finished": 0,
+                "correct": 0,
+                "correct_with_extra_steps": 0,
+                "success_total": 0
+            }
+        }
+    },
+    "domain_results": {
+        "public_safety": {
+            "sample_count": 1,
+            "level_3": {
+                "task_success_soft": 1.0,
+                "tool_call_exact_soft": 1.0,
+                "parameter_accuracy": 1.0,
+                "step_efficiency_soft": 0.5,
+                "agent_capability_score": 0.5,
+                "effective_step_utilization": 0.5,
+                "self_correction_rate": 0.0
+            }
+        }
+    },
+    "domain_group_results": {
+        "Government": {
+            "sample_count": 1,
+            "level_3": {
+                "task_success_soft": 1.0,
+                "tool_call_exact_soft": 1.0,
+                "parameter_accuracy": 1.0,
+                "step_efficiency_soft": 0.5,
+                "agent_capability_score": 0.5,
+                "effective_step_utilization": 0.5,
+                "self_correction_rate": 0.0
+            }
+        }
+    }
+}

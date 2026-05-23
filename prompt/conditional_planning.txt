@@ -1,0 +1,101 @@
+﻿Task Description:  
+You need to go ahead and generate samples of agent application demo instance with as much diversity as possible, based on the current dimension, the requirements of the task, and the sample references provided.
+
+Current dimension: conditional_planning: The task involves explicit or implicit logical branches (If-Else). The execution path depends on the output of a specific status-check tool. The Agent must choose ONLY ONE execution path based on the environment status.
+
+Task Requirement:  
+ - Generate new samples taking into account as much as possible the diversity of user query and available tools.
+ - First, ensure the task description contains a clear condition (e.g., "Check status A. If A is X, do B; otherwise, do C.").
+ - CRITICAL: You must define the outcome of the condition in `simulation_script`. For example, if the condition tool `check_weather` returns 'Rain' in the script, then `planning_tools` MUST ONLY contain the tools for the 'Rain' branch (e.g., `buy_umbrella`). It must NOT contain tools for the 'Sun' branch.
+ - The generated sample should be "Solvable" by default.
+ - The samples need to consider a realistic scenario as much as possible.
+ - STRICTLY DIVERSIFY THE AGENT ROLE: Do not use generic roles like "Assistant". You MUST randomly select a specific domain for each sample from list like: [IT Operations, Smart Home IoT, Financial Compliance, Medical Triage, Legal Research, Supply Chain Logistics, Cyber Security, HR Management]. Define a specific job title and specific capabilities corresponding to that domain.
+
+TOOL & PARAMETER CONSTRAINTS (STRICTLY ENFORCE):
+ - Each tool MUST have 1-4 parameters ONLY (never exceed 4 parameters per tool).
+ - All the parameters used must be contained in Env or produced by the tools used before.
+ - Total tools: 2-6 domain-specific tools + UnsolvableQuery + finish.
+ - Keep tools focused and single-purpose (avoid tools that do too many things).
+
+Output Format Requirements (CRITICAL):
+Your output must be a VALID JSON object containing EXACTLY these keys:
+1. "Agent_role": (string)
+2. "Env": (string)
+3. "task": (string)
+4. "tools": (list of strings, 2-6 domain tools + UnsolvableQuery + finish)
+5. "simulation_script": (Dictionary object. MUST NOT BE EMPTY. Must define return values for ALL tools in the tools list except UnsolvableQuery and finish, including the condition-check tool.)
+6. "planning_tools": (list of strings, matching the script's logic and containing ONLY the selected branch)
+7. "Solvability": "Solvable"
+
+Note: "id", "domain", and "subtask" fields will be added automatically by the system.
+
+CRITICAL JSON STRING RULES:
+- Do NOT insert line breaks or newlines inside any string value.
+- Each element in "planning_tools" array MUST be a complete, single-line string.
+- Use SINGLE QUOTES for function argument values inside the double-quoted JSON string.
+- CORRECT: "check_inventory(item_name='Steel-Beams')"
+- CORRECT: "finish(result='Task completed successfully')"
+- Never split a string across multiple array elements.
+
+At build time, you need to: 
+ First, explicitly select a specific industry domain that is different from previous context. Based on this domain, define a unique Agent_role. Only after the Role is defined, design a task that contains logical branches.
+ Ensure that the provided toolset contains tools for BOTH branches (e.g., both `buy_umbrella` and `buy_sunscreen` are available tools), but the `planning_tools` (the answer) only selects the one matching the `simulation_script`.
+ MANDATORY TOOLS: Every toolset MUST include BOTH of these essential tools:
+   - "UnsolvableQuery(reason)" – Call this when the task cannot be completed due to missing tools, missing arguments, or PERMISSION DENIED.
+   - "finish(result)" – Call this to conclude the task and return the final result to the user. This tool MUST be the last tool in `planning_tools` for all Solvable tasks.
+ In `simulation_script`, explicitly define realistic return values for ALL tools in the `tools` list (except UnsolvableQuery and finish). The condition-checking tool's return value MUST determine the single branch used in `planning_tools`.
+
+Sample Reference: 
+ ==== Reference Sample Start ==== 
+----Begin sign----
+{
+  "Agent_role": "Role: Supply_Chain_Manager",
+  "Env": "Warehouse: 'Zone-A'; Item: 'Steel-Beams';",
+  "task": "Check the inventory level of 'Steel-Beams'. If the stock is below 100 units, place a restock order; otherwise, log a 'Sufficient Stock' report.",
+  "tools": [
+    "check_inventory(item_name) – Returns current stock count.",
+    "place_restock_order(item_name, quantity) – Orders new stock.",
+    "log_status_report(item_name, status) – Logs the status in the system.",
+    "UnsolvableQuery(reason) – Reports failure.",
+    "finish(result) – Concludes the task and returns final result."
+  ],
+  "simulation_script": {
+    "check_inventory": {
+      "return_value": "50",
+      "observation": "Current stock for Steel-Beams: 50 units."
+    },
+    "place_restock_order": {
+      "return_value": "Order-ID-999",
+      "observation": "Restock order placed successfully."
+    },
+    "log_status_report": {
+      "return_value": "Report-Logged",
+      "observation": "Status report logged: Sufficient Stock."
+    }
+  },
+  "planning_tools": [
+    "check_inventory(item_name='Steel-Beams')",
+    "place_restock_order(item_name='Steel-Beams', quantity=100)",
+    "finish(result='Restock order placed for Steel-Beams, Order-ID-999')"
+  ],
+  "Solvability": "Solvable"
+}
+----End sign----
+==== Reference Sample End ==== 
+
+ Now, please combine the reference sample and the corresponding build steps, try to select tasks from different domains and scenarios. We start generating new single samples corresponding to the dimensions. Conditional planning dimension generation sample (one): 
+
+⚠️ CRITICAL OUTPUT FORMAT REQUIREMENT:
+Your output must strictly begin with the "----Begin sign----" and end with the "----End sign----" like the reference sample.
+Do NOT wrap the output in markdown code blocks (no ```json or ``` tags).
+Output ONLY the raw JSON between the Begin/End markers.
+Ensure the JSON is valid and simulation_script is populated.
+
+⚠️ CONDITIONAL PLANNING CONSTRAINT REMINDER:
+- The task MUST contain a clear If-Else condition.
+- simulation_script MUST define the condition-check result.
+- planning_tools MUST call the condition-check tool first, then ONLY the branch matching the scripted condition result.
+- planning_tools MUST NOT include tools from the unselected branch.
+- Last element in planning_tools MUST be finish(result='...').
+
+ ==== Sample Start ====

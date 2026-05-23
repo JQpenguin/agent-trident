@@ -1,0 +1,113 @@
+﻿Task Description:  
+You need to go ahead and generate samples of agent application demo instance with as much diversity as possible, based on the current dimension, the requirements of the task, and the sample references provided.
+
+Current dimension: os: The task takes place entirely within an Operating System environment. All tools, operations, and objectives must be directly related to OS-level administration tasks such as kernel updates, user/group management, software installation/removal, file/folder handling, boot/startup configuration, permissions management, service/daemon control, disk/partition management, network configuration, scheduled tasks/cron jobs, registry/system configuration, environment variables, and process management.
+
+Task Requirement:  
+ - Generate new samples taking into account as much as possible the diversity of user query and available tools.
+ - OS TYPE DIVERSITY (CRITICAL): You MUST use the EXACT operating system specified in the generation constraints. The three major OS families must be represented: Linux (Ubuntu, RHEL, Debian, CentOS, Rocky Linux, openSUSE, Arch Linux, Fedora), Windows (Windows Server 2022/2019, Windows 11/10), and macOS (Sonoma, Ventura, Monterey, Sequoia).
+ - Use OS-specific utilities and conventions: Linux should use commands such as apt/dnf/zypper/pacman, systemctl, journalctl; Windows should use PowerShell cmdlets, sc.exe, netsh, Group Policy, Registry, NTFS, Active Directory; macOS should use launchctl, brew, diskutil, dscl, defaults, pmset.
+ - SCENARIO DIVERSITY: Each sample must target a DIFFERENT OS administration scenario, such as user/group management, file system permissions, package management, service/process management, network configuration, system configuration, disk/storage management, scheduled tasks, or security/audit operations.
+ - ROLE DIVERSITY: Define a specific, non-generic Agent Role (e.g., "Senior Linux Systems Administrator", "Windows Domain Infrastructure Engineer", "macOS Fleet MDM Engineer", NOT just "SysAdmin" or "IT staff").
+ - OS ENVIRONMENT (CRITICAL): The task MUST explicitly specify the target OS (e.g., "Ubuntu 22.04 LTS", "Windows Server 2022", "RHEL 9", "macOS Sonoma 14.2").
+ - All tools must be authentic OS-level utilities or administration tools, NOT generic CRUD operations.
+ - The Env field must include OS version, hostname, and relevant system identifiers such as IP, disk labels, user IDs, service names, paths, registry keys, or scheduled task names.
+ - The task description must make it clear that the operations happen at the OS layer.
+ - The task must require a single, deterministic execution order with clear logical dependencies between steps.
+ - The generated sample should be "Solvable" by default.
+ - The samples need to consider a realistic scenario as much as possible.
+
+TOOL & PARAMETER CONSTRAINTS (STRICTLY ENFORCE):
+ - Each tool MUST have 1-4 parameters ONLY (never exceed 4 parameters per tool).
+ - All the parameters used must be contained in Env or produced by the tools used before.
+ - Total tools: 2-4 domain-specific OS tools + UnsolvableQuery + finish (MAX 6 tools total).
+ - Keep tools focused and single-purpose (avoid tools that do too many things).
+ - Tool names should reflect real OS commands or administration utilities (e.g., `set_file_permissions`, `manage_systemd_service`, `configure_firewall_rule`).
+ - The `planning_tools` list must contain 2-4 tool calls plus the final `finish` call, meaning 3-5 total entries. NEVER exceed 5 entries.
+ - Return values in `simulation_script` should resemble actual OS command output.
+
+Output Format Requirements (CRITICAL):
+Your output must be a VALID JSON object containing EXACTLY these keys:
+1. "Agent_role": (string, a specific OS administration role title)
+2. "Env": (string, detailed environment: OS name/version, hostname, and relevant system identifiers)
+3. "task": (string, clear OS-level task description with numbered sub-steps)
+4. "tools": (list of strings, 2-4 OS tools + UnsolvableQuery + finish)
+5. "simulation_script": (Dictionary object. MUST NOT BE EMPTY. Must define return values for ALL tools in the tools list except UnsolvableQuery and finish.)
+6. "planning_tools": (list of strings, 2-4 OS tool calls + finish, single-line tool calls with named arguments)
+7. "Solvability": "Solvable"
+
+Note: "id", "domain", and "subtask" fields will be added automatically by the system.
+
+CRITICAL JSON STRING RULES:
+- Do NOT insert line breaks or newlines inside any string value.
+- Each element in "planning_tools" array MUST be a complete, single-line string.
+- Use SINGLE QUOTES for function argument values inside the double-quoted JSON string.
+- Use DOUBLE QUOTES only for JSON keys and string values.
+- NEVER use escaped quotes (\") inside strings — use single quotes instead.
+- CORRECT: "manage_systemd_service(service_name='nginx', action='status')"
+- CORRECT: "finish(result='OS maintenance completed successfully')"
+- Never split a string across multiple array elements.
+
+At build time, you need to: 
+ First, explicitly select a specific operating system and OS administration scenario that is different from previous context. Based on this OS and scenario, define a unique Agent_role. Only after the Role is defined, design an OS-level task with a deterministic order of operations.
+ Ensure all tools are real OS-level administration operations and that all parameters are realistic for the specified OS environment. Simplify workflows so `planning_tools` stays within 2-4 OS tool calls + finish.
+ MANDATORY TOOLS: Every toolset MUST include BOTH of these essential tools:
+   - "UnsolvableQuery(reason)" – Called when the task cannot be completed with the available tools.
+   - "finish(result)" – Called to conclude the task and return the final result.
+ In `simulation_script`, explicitly define realistic return values for ALL tools in the `tools` list (except UnsolvableQuery and finish). Return values should resemble actual OS command output.
+
+Sample Reference: 
+Reference Sample (Study this pattern strictly):
+----Begin sign----
+{
+  "Agent_role": "Senior Linux Systems Administrator",
+  "Env": "OS: Ubuntu 22.04.3 LTS; Hostname: prod-web-srv-01; IP: 10.0.5.21; Target Service: nginx; Config Path: /etc/nginx/nginx.conf; SSL Cert: /etc/ssl/certs/app.pem; Maintenance Window: 02:00-04:00 UTC;",
+  "task": "The Nginx service on prod-web-srv-01 needs an SSL certificate rotation. Perform the following OS-level operations: 1. Check the current status of the nginx service to confirm it is running. 2. Replace the expired SSL certificate file with the new one from the staging directory /tmp/new_app.pem. 3. Validate the updated Nginx configuration to ensure no syntax errors. 4. Reload the nginx service to apply the new certificate without downtime.",
+  "tools": [
+    "manage_systemd_service(service_name, action) – Controls systemd services. Actions: 'status', 'start', 'stop', 'restart', 'reload'. Returns service state and PID.",
+    "copy_file(source_path, destination_path) – Copies a file from source to destination, overwriting if exists. Returns success status and file metadata.",
+    "validate_nginx_config(config_path) – Runs 'nginx -t' against the specified config file. Returns syntax validation result.",
+    "UnsolvableQuery(reason) – Called when the task cannot be completed with available tools.",
+    "finish(result) – Concludes the task and returns the final result."
+  ],
+  "simulation_script": {
+    "manage_systemd_service": {
+      "return_value": "● nginx.service - A high performance web server. Active: active (running) since Mon 2026-02-02 01:15:33 UTC; PID: 2847",
+      "observation": "Nginx service is currently active and running with PID 2847."
+    },
+    "copy_file": {
+      "return_value": "File copied: /tmp/new_app.pem → /etc/ssl/certs/app.pem (2.1 KB, permissions preserved: 0644, owner: root:root)",
+      "observation": "New SSL certificate successfully placed at the target path."
+    },
+    "validate_nginx_config": {
+      "return_value": "nginx: the configuration file /etc/nginx/nginx.conf syntax is ok. nginx: configuration file /etc/nginx/nginx.conf test is successful.",
+      "observation": "Nginx configuration passes syntax validation with the new certificate."
+    }
+  },
+  "planning_tools": [
+    "manage_systemd_service(service_name='nginx', action='status')",
+    "copy_file(source_path='/tmp/new_app.pem', destination_path='/etc/ssl/certs/app.pem')",
+    "validate_nginx_config(config_path='/etc/nginx/nginx.conf')",
+    "manage_systemd_service(service_name='nginx', action='reload')",
+    "finish(result='SSL certificate rotation completed on prod-web-srv-01. Nginx was running (PID 2847). New cert copied to /etc/ssl/certs/app.pem. Config validated successfully. Nginx reloaded to apply new certificate.')"
+  ],
+  "Solvability": "Solvable"
+}
+----End sign----
+ Now, please combine the reference sample and the corresponding build steps, try to select tasks from different domains and scenarios. We start generating new single samples corresponding to the dimensions. OS environment dimension generation sample (one): 
+
+⚠️ CRITICAL OUTPUT FORMAT REQUIREMENT:
+Your output must strictly begin with the "----Begin sign----" and end with the "----End sign----" like the reference sample.
+Do NOT wrap the output in markdown code blocks (no ```json or ``` tags).
+Output ONLY the raw JSON between the Begin/End markers.
+Ensure the JSON is valid and simulation_script is populated.
+
+⚠️ OS ENVIRONMENT CONSTRAINT REMINDER:
+- The task MUST take place entirely at the OS administration layer.
+- Env MUST specify OS name/version, hostname, and relevant system identifiers.
+- Tools MUST be authentic OS-level utilities or administration operations.
+- planning_tools MUST have 3-5 total elements (2-4 OS tool calls + finish).
+- Last element MUST be finish(result='...').
+
+ ==== Sample Start ====
+

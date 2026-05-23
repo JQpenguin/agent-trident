@@ -1,0 +1,12 @@
+{
+    "single_step": {
+        "level_1": [
+            {
+                "response": "<answer>solvable</answer>",
+                "golden": "solvable",
+                "prompt_tokens": 445,
+                "completion_tokens": 435
+            }
+        ]
+    }
+}

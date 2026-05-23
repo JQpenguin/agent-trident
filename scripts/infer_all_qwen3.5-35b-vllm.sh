@@ -1,5 +1,3 @@
-#!/bin/bash
-
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -7,11 +5,14 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 DATA_DIR="$PROJECT_ROOT/data"
 
 if [ -z "$1" ]; then
-    DATA_PATH="$DATA_DIR/ares_benchmark.json"
+    DATA_PATH="$DATA_DIR/trident_benchmark.json"
     if [ ! -f "$DATA_PATH" ]; then
-        DATA_PATH=$(ls -t "$DATA_DIR"/ares_benchmark_*.json 2>/dev/null | head -1)
+        DATA_PATH="$DATA_DIR/trident_benchmark_full.json"
     fi
-    if [ -z "$DATA_PATH" ]; then
+    if [ ! -f "$DATA_PATH" ]; then
+        DATA_PATH=$(ls -t "$DATA_DIR"/trident_benchmark*.json 2>/dev/null | head -1)
+    fi
+    if [ -z "$DATA_PATH" ] || [ ! -f "$DATA_PATH" ]; then
         echo "Dataset file not found. Check $DATA_DIR."
         exit 1
     fi
@@ -22,9 +23,10 @@ fi
 NUM_WORKERS="${2:-10}"
 ALL_STRATEGIES="${AGENT_STRATEGIES:-react reflexion plan_execute}"
 
-MODEL="${VLLM_MODEL:-Qwen/Qwen3.5-35B}"
-MODEL_NAME_SAVE="${MODEL_NAME_SAVE:-qwen3.5-35b}"
+MODEL="${VLLM_MODEL:-Qwen/Qwen3.5-35B-A3B}"
+MODEL_NAME_SAVE="${MODEL_NAME_SAVE:-qwen3.5-35b-a3b}"
 VLLM_API_URL="${VLLM_API_URL:-http://localhost:8000/v1/chat/completions}"
+export VLLM_MAX_TOKENS="${VLLM_MAX_TOKENS:-1024}"
 
 if [ "$NUM_WORKERS" -eq 1 ]; then
     PARALLEL_FLAG=""
@@ -45,6 +47,7 @@ echo "Dataset name:   $DATASET_NAME"
 echo "Model:          $MODEL"
 echo "Saved as:       $MODEL_NAME_SAVE"
 echo "vLLM endpoint:  $VLLM_API_URL"
+echo "Max output tokens: $VLLM_MAX_TOKENS"
 echo "Agent strategies: $ALL_STRATEGIES"
 echo "Inference mode: $PARALLEL_DESC"
 echo "Output directory: $OUTPUT_BASE"
@@ -136,5 +139,5 @@ done
 echo "============================================================"
 echo ""
 echo "Next evaluation command:"
-echo "  bash scripts/eval_all.sh $OUTPUT_BASE \"\" $MODEL_NAME_SAVE"
+echo "  bash scripts/eval_all.sh \"$OUTPUT_BASE\" \"\" \"$MODEL_NAME_SAVE\""
 echo "============================================================"

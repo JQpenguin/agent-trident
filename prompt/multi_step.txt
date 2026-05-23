@@ -1,0 +1,119 @@
+﻿Task Description:  
+You need to go ahead and generate samples of agent application demo instance with as much diversity as possible, based on the current dimension, the requirements of the task, and the sample references provided.
+
+Current dimension: multi_step_no_rep: The task requires MULTIPLE steps to complete, where EACH STEP uses a DIFFERENT tool. No tool should be called more than once. This tests the agent's ability to orchestrate diverse capabilities in a single workflow.
+
+Task Requirement:  
+ - Generate new samples taking into account as much as possible the diversity of user query and available tools.
+ - CRITICAL: The task MUST require 3-5 distinct tool calls to complete (excluding finish).
+ - CRITICAL: Each tool in `planning_tools` must be DIFFERENT. NO tool repetition allowed.
+ - The workflow should be logically connected, and each step should naturally lead to the next while using a unique tool.
+ - The generated sample should be "Solvable" by default.
+ - The samples need to consider a realistic scenario as much as possible.
+ - STRICTLY DIVERSIFY THE AGENT ROLE: Do not use generic roles like "Assistant". You MUST randomly select a specific domain for each sample from list like: [IT Operations, Smart Home IoT, Financial Compliance, Medical Triage, Legal Research, Supply Chain Logistics, Cyber Security, HR Management]. Define a specific job title and specific capabilities corresponding to that domain.
+
+TOOL & PARAMETER CONSTRAINTS (STRICTLY ENFORCE):
+ - Each tool MUST have 1-4 parameters ONLY (never exceed 4 parameters per tool).
+ - All the parameters used must be contained in Env or produced by the tools used before.
+ - Total tools: 4-8 domain-specific tools + UnsolvableQuery + finish.
+ - Keep tools focused and single-purpose (avoid tools that do too many things).
+ - The `planning_tools` should use 3-5 DIFFERENT tools + finish (4-6 total elements).
+
+Output Format Requirements (CRITICAL):
+Your output must be a VALID JSON object containing EXACTLY these keys:
+1. "Agent_role": (string)
+2. "Env": (string)
+3. "task": (string)
+4. "tools": (list of strings, 4-8 domain tools + UnsolvableQuery + finish)
+5. "simulation_script": (Dictionary object. MUST NOT BE EMPTY. Must define return values for ALL tools in the tools list except UnsolvableQuery and finish.)
+6. "planning_tools": (list of strings, 3-5 DIFFERENT tools + finish, NO repetition)
+7. "Solvability": "Solvable"
+
+Note: "id", "domain", and "subtask" fields will be added automatically by the system.
+
+CRITICAL JSON STRING RULES:
+- Do NOT insert line breaks or newlines inside any string value.
+- Each element in "planning_tools" array MUST be a complete, single-line string.
+- Use SINGLE QUOTES for function argument values inside the double-quoted JSON string.
+- CORRECT: "validate_compliance(report_id='RPT-2024-001')"
+- CORRECT: "finish(result='Multi-step workflow completed successfully')"
+- Never split a string across multiple array elements.
+
+At build time, you need to: 
+ First, explicitly select a specific industry domain that is different from previous context. Based on this domain, define a unique Agent_role. Only after the Role is defined, design a MULTI-STEP task that requires 3-5 different tools.
+ Design a workflow where each step naturally leads to the next but uses a DIFFERENT tool. Do not repeat any tool in `planning_tools`.
+ MANDATORY TOOLS: Every toolset MUST include BOTH of these essential tools:
+   - "UnsolvableQuery(reason)" – Call this when the task cannot be completed due to missing tools, missing arguments, or PERMISSION DENIED.
+   - "finish(result)" – Call this to conclude the task and return the final result to the user. This tool MUST be the last tool in `planning_tools` for all Solvable tasks.
+ In `simulation_script`, explicitly define realistic return values for ALL tools in the `tools` list (except UnsolvableQuery and finish). The output of one tool can inform the next step, but each tool used in `planning_tools` must be unique.
+
+Sample Reference: 
+ ==== Reference Sample Start ==== 
+----Begin sign----
+{
+  "Agent_role": "Role: Security_Operations_Analyst",
+  "Env": "Organization: CyberShield Corp; SOC Floor: Sector-B3; Active Alert: ALERT-2024-1892; Severity: High; System: Splunk SIEM v8.2;",
+  "task": "Investigate security alert ALERT-2024-1892: First identify the source IP, then check if it's in our threat intelligence database, lookup the associated user account, and finally create an incident ticket for the security team.",
+  "tools": [
+    "get_alert_details(alert_id) – Returns source IP, timestamp, and alert type for a security alert.",
+    "check_threat_intel(ip_address) – Queries threat intelligence feeds for reputation and history.",
+    "lookup_user_by_ip(ip_address, time_range) – Identifies the user account associated with an IP during a time window.",
+    "create_incident_ticket(title, severity, description) – Creates a new incident in the ticketing system.",
+    "block_ip_address(ip_address, duration) – Adds IP to firewall blocklist.",
+    "send_notification(recipient, message) – Sends alert to specified recipient.",
+    "UnsolvableQuery(reason) – Reports failure.",
+    "finish(result) – Concludes the task and returns final result."
+  ],
+  "simulation_script": {
+    "get_alert_details": {
+      "return_value": "Source IP: 192.168.45.101, Timestamp: 2024-03-15 14:22:05, Type: Brute Force Attempt",
+      "observation": "Alert ALERT-2024-1892 details retrieved. Source IP is 192.168.45.101, detected brute force activity."
+    },
+    "check_threat_intel": {
+      "return_value": "Known malicious IP, associated with botnet C2 infrastructure, threat score: 85/100",
+      "observation": "IP 192.168.45.101 is flagged in threat intel databases with high risk score."
+    },
+    "lookup_user_by_ip": {
+      "return_value": "User: john.smith@cybershield.com, Department: Finance, Last Login: 2024-03-15 14:20:00",
+      "observation": "IP 192.168.45.101 was assigned to user john.smith during the alert timeframe."
+    },
+    "create_incident_ticket": {
+      "return_value": "INC-2024-0892",
+      "observation": "Incident ticket INC-2024-0892 created successfully with High severity."
+    },
+    "block_ip_address": {
+      "return_value": "IP blocked for 24 hours",
+      "observation": "IP 192.168.45.101 added to blocklist."
+    },
+    "send_notification": {
+      "return_value": "Notification sent",
+      "observation": "Alert notification delivered to security team."
+    }
+  },
+  "planning_tools": [
+    "get_alert_details(alert_id='ALERT-2024-1892')",
+    "check_threat_intel(ip_address='192.168.45.101')",
+    "lookup_user_by_ip(ip_address='192.168.45.101', time_range='2024-03-15 14:00-15:00')",
+    "create_incident_ticket(title='Brute Force from Malicious IP - User john.smith', severity='High', description='Malicious IP 192.168.45.101 targeting Finance user account')",
+    "finish(result='Investigation complete. Alert ALERT-2024-1892 traced to malicious IP 192.168.45.101 targeting user john.smith. Incident ticket INC-2024-0892 created.')"
+  ],
+  "Solvability": "Solvable"
+}
+----End sign----
+==== Reference Sample End ==== 
+
+ Now, please combine the reference sample and the corresponding build steps, try to select tasks from different domains and scenarios. We start generating new single samples corresponding to the dimensions. Multi-step without repetition dimension generation sample (one): 
+
+⚠️ CRITICAL OUTPUT FORMAT REQUIREMENT:
+Your output must strictly begin with the "----Begin sign----" and end with the "----End sign----" like the reference sample.
+Do NOT wrap the output in markdown code blocks (no ```json or ``` tags).
+Output ONLY the raw JSON between the Begin/End markers.
+Ensure the JSON is valid and simulation_script is populated.
+
+⚠️ MULTI-STEP NO REPETITION CONSTRAINT REMINDER:
+- planning_tools MUST have 4-6 elements (3-5 different tools + finish).
+- EVERY tool call must be UNIQUE. NO tool should appear twice.
+- Each step should logically connect to form a coherent workflow.
+- Last element MUST be finish(result='...').
+
+ ==== Sample Start ====

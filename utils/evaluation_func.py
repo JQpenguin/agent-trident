@@ -74,6 +74,70 @@ def _calculate_step_utilization(pred_tool_names, golden_tool_names):
 
 
 
+def _calculate_process_precision(pred_tool_calls, golden_tool_calls, simulation_script=None, emb_model=None):
+
+    from utils.extract_func import extract_tool_name_from_call, extract_params_from_call
+
+    if not pred_tool_calls:
+
+        return 0.0
+
+    if not golden_tool_calls:
+
+        return 0.0
+
+    valid_count = 0
+
+    golden_cursor = 0
+
+    simulation_script = simulation_script or {}
+
+    golden_names = [extract_tool_name_from_call(call) for call in golden_tool_calls]
+
+    for pred_call in pred_tool_calls:
+
+        pred_name = extract_tool_name_from_call(pred_call)
+
+        if not pred_name:
+
+            continue
+
+        matched_index = None
+
+        for idx in range(golden_cursor, len(golden_tool_calls)):
+
+            if golden_names[idx] == pred_name:
+
+                matched_index = idx
+
+                break
+
+        if matched_index is None:
+
+            continue
+
+        pred_params = extract_params_from_call(pred_call)
+
+        golden_params = extract_params_from_call(golden_tool_calls[matched_index])
+
+        param_result = compare_params(
+
+            pred_params, golden_params, matched_index, simulation_script, golden_tool_calls,
+
+            tool_name=pred_name, emb_model=emb_model
+
+        )
+
+        if param_result["score"] >= 1.0:
+
+            valid_count += 1
+
+            golden_cursor = matched_index + 1
+
+    return valid_count / len(pred_tool_calls)
+
+
+
 def compare_params(pred_params, golden_params, step_index, simulation_script, golden_planning_tools, tool_name=None, emb_model=None):
 
     from utils.extract_func import is_step_output_placeholder, extract_step_number_from_placeholder
@@ -621,6 +685,11 @@ def _evaluate_planning_v2(
         return empty_result
 
 
+    if "UnsolvableQuery" not in golden_tool_names and "UnsolvableQuery" in pred_tool_names:
+
+        return empty_result
+
+
 
 
 
@@ -698,7 +767,13 @@ def _evaluate_planning_v2(
 
 
 
-    planning_precision = _calculate_step_utilization(pred_tool_names, golden_tool_names)
+    planning_precision = _calculate_process_precision(
+
+        pred_planning_tool_list, golden_planning_tool_list,
+
+        simulation_script=simulation_script, emb_model=emb_model
+
+    )
 
 
 
@@ -978,7 +1053,13 @@ def _evaluate_planning_analysis_v2(
 
 
 
-    planning_precision = _calculate_step_utilization(pred_tool_names, golden_tool_names)
+    planning_precision = _calculate_process_precision(
+
+        pred_planning_tool_list, golden_planning_tool_list,
+
+        simulation_script=simulation_script, emb_model=emb_model
+
+    )
 
 
 
@@ -1464,9 +1545,11 @@ def _evaluate_react(
 
 
 
-    effective_step_utilization = _calculate_step_utilization(
+    effective_step_utilization = _calculate_process_precision(
 
-        pred_tool_names_no_finish, golden_tool_names_no_finish
+        pred_tool_calls_no_finish, golden_tool_calls_no_finish,
+
+        simulation_script=simulation_script, emb_model=emb_model
 
     )
 
@@ -1553,6 +1636,14 @@ def _calculate_task_success(pred_tool_calls, golden_tool_calls, provided_tools, 
     golden_names = [extract_tool_name_from_call(c) for c in golden_tool_calls]
 
 
+
+    if "UnsolvableQuery" not in golden_names and "UnsolvableQuery" in pred_names:
+
+        return 0
+
+    if "UnsolvableQuery" in golden_names and "UnsolvableQuery" not in pred_names:
+
+        return 0
 
     if mode == "hard":
 

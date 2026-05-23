@@ -1,0 +1,8 @@
+{
+  "model": "deepseek-v4-pro",
+  "agent_strategy": "react",
+  "total_prompt_tokens": 632,
+  "total_completion_tokens": 229,
+  "total_tokens": 861,
+  "elapsed_seconds": 7.66
+}

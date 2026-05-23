@@ -38,7 +38,7 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--data_path", type=str, default="./data/ares_benchmark.json")
+    parser.add_argument("--data_path", type=str, default="./data/trident_benchmark.json")
 
     parser.add_argument("--output_dictory", type=str, default="./results/en")
 
@@ -82,9 +82,9 @@ def main():
 
 
 
-    parser.add_argument("--calculate_type", type=str, default="hard", choices=["hard", "soft", "all"],
+    parser.add_argument("--calculate_type", type=str, default="soft", choices=["hard", "soft", "all"],
 
-                        help="Calculate metrics for hard, soft, or all calculation levels (default: hard)")
+                        help="Calculate metrics for hard, soft, or all calculation levels (default: soft)")
 
 
 
@@ -100,7 +100,7 @@ def main():
 
 
 
-    parser.add_argument("--lang", type=str, default="en", choices=["en", "zh"])
+    parser.add_argument("--lang", type=str, default="en", choices=["en"])
 
     parser.add_argument("--detecting_prompt", type=str, default=_detecting_en)
 

@@ -1,5 +1,3 @@
-#!/bin/bash
-
 set -e
 
 CALCULATE_TYPE="soft"
@@ -10,7 +8,7 @@ DATA_DIR="$PROJECT_ROOT/data"
 RESULTS_BASE="$PROJECT_ROOT/results"
 
 if [ -z "$1" ]; then
-    INFER_DIR=$(find "$RESULTS_BASE" -maxdepth 1 -type d -name 'infer_results(ares_benchmark*)' 2>/dev/null | sort -r | head -1)
+    INFER_DIR=$(find "$RESULTS_BASE" -maxdepth 1 -type d -name 'infer_results(trident_benchmark*)' 2>/dev/null | sort -r | head -1)
     if [ -z "$INFER_DIR" ]; then
         INFER_DIR=$(ls -td "$RESULTS_BASE"/infer_results\(*\) "$RESULTS_BASE"/infer-results-* 2>/dev/null | head -1)
     fi
@@ -23,11 +21,14 @@ else
 fi
 
 if [ -z "$2" ]; then
-    DATA_PATH="$DATA_DIR/ares_benchmark.json"
+    DATA_PATH="$DATA_DIR/trident_benchmark.json"
     if [ ! -f "$DATA_PATH" ]; then
-        DATA_PATH=$(ls -t "$DATA_DIR"/ares_benchmark_*.json 2>/dev/null | head -1)
+        DATA_PATH="$DATA_DIR/trident_benchmark_full.json"
     fi
-    if [ -z "$DATA_PATH" ]; then
+    if [ ! -f "$DATA_PATH" ]; then
+        DATA_PATH=$(ls -t "$DATA_DIR"/trident_benchmark*.json 2>/dev/null | head -1)
+    fi
+    if [ -z "$DATA_PATH" ] || [ ! -f "$DATA_PATH" ]; then
         echo "Dataset file not found. Check $DATA_DIR."
         exit 1
     fi
@@ -109,7 +110,7 @@ fi
 DETECTED_STRATEGIES=$(echo "$DETECTED_STRATEGIES" | xargs)
 
 echo "============================================================"
-echo "Ares three-level evaluation (soft mode)"
+echo "TRIDENT three-level evaluation (soft mode)"
 echo "============================================================"
 echo "Inference results directory: $INFER_DIR"
 echo "Dataset path:   $DATA_PATH"

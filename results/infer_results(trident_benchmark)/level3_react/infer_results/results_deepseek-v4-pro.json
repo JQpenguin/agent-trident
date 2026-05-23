@@ -1,0 +1,32 @@
+{
+    "single_step": {
+        "level_3": [
+            {
+                "response": {
+                    "thoughts": [
+                        "I need to retrieve the current status of incident INC-2024-787 using the available tool.",
+                        "I have retrieved the current status and assigned unit for the incident. This satisfies the request for a status update."
+                    ],
+                    "actions": [
+                        "get_incident_status(case_number='INC-2024-787')",
+                        "finish(answer='Incident INC-2024-787: Status is En route, assigned to Unit E-12, with an ETA of 8 minutes.')"
+                    ],
+                    "observations": [
+                        "Unit E-12, Status: En route, ETA 8 minutes",
+                        "Task completed with answer: Incident INC-2024-787: Status is En route, assigned to Unit E-12, with an ETA of 8 minutes."
+                    ],
+                    "total_steps": 2,
+                    "finished": true,
+                    "final_answer": "Incident INC-2024-787: Status is En route, assigned to Unit E-12, with an ETA of 8 minutes."
+                },
+                "golden": "solvable",
+                "planning_tools": [
+                    "get_incident_status(case_number='INC-2024-787')",
+                    "finish(result='Incident INC-2024-787 is assigned to Unit E-12. Status: En route. ETA: 8 minutes.')"
+                ],
+                "prompt_tokens": 2076,
+                "completion_tokens": 483
+            }
+        ]
+    }
+}

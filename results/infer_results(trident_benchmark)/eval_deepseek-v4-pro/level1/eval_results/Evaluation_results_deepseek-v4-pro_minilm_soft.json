@@ -1,0 +1,135 @@
+{
+    "sub_task_results": {
+        "single_step": {
+            "level_1": {
+                "exact_match": 1.0,
+                "hallucination_rate": 0.0,
+                "risk_adjusted_score": 1.0,
+                "counts": {
+                    "confident_right": 1,
+                    "confident_wrong": 0,
+                    "uncertain": 0,
+                    "no_answer": 0,
+                    "total": 1
+                }
+            }
+        }
+    },
+    "group_results": {
+        "Solvable": {
+            "Level 1 Exact Match": 1.0,
+            "Level 1 Hallucination Rate": 0.0,
+            "Level 1 PSA": 1.0,
+            "Level 1 Counts": {
+                "confident_right": 1,
+                "confident_wrong": 0,
+                "uncertain": 0,
+                "no_answer": 0,
+                "total": 1
+            },
+            "token_usage": {
+                "total_prompt_tokens": 445,
+                "total_completion_tokens": 435,
+                "total_tokens": 880,
+                "avg_prompt_tokens": 445.0,
+                "avg_completion_tokens": 435.0,
+                "sample_count": 1
+            }
+        },
+        "Unsolvable": {
+            "Level 1 Exact Match": 0.0,
+            "Level 1 Hallucination Rate": 0.0,
+            "Level 1 PSA": 0.0,
+            "Level 1 Counts": {
+                "confident_right": 0,
+                "confident_wrong": 0,
+                "uncertain": 0,
+                "no_answer": 0,
+                "total": 0
+            }
+        },
+        "overall": {
+            "Level 1 Exact Match": 1.0,
+            "Level 1 Hallucination Rate": 0.0,
+            "Level 1 PSA": 1.0,
+            "Level 1 Counts": {
+                "confident_right": 1,
+                "confident_wrong": 0,
+                "uncertain": 0,
+                "no_answer": 0,
+                "total": 1
+            },
+            "token_usage": {
+                "total_prompt_tokens": 445,
+                "total_completion_tokens": 435,
+                "total_tokens": 880,
+                "avg_prompt_tokens": 445.0,
+                "avg_completion_tokens": 435.0,
+                "sample_count": 1
+            }
+        }
+    },
+    "analysis_results": {
+        "LeveL 1 / Solvable": {
+            "Confident Right": 1,
+            "Confident Wrong": 0,
+            "Uncertain": 0,
+            "No Answer": 0,
+            "Total": 1,
+            "Hallucination Rate": 0.0
+        },
+        "LeveL 1 / Unsolvable": {
+            "Confident Right": 0,
+            "Confident Wrong": 0,
+            "Uncertain": 0,
+            "No Answer": 0,
+            "Total": 0,
+            "Hallucination Rate": 0.0
+        },
+        "LeveL 1 / Overall": {
+            "Confident Right": 1,
+            "Confident Wrong": 0,
+            "Uncertain": 0,
+            "No Answer": 0,
+            "Total": 1,
+            "Hallucination Rate": 0.0
+        },
+        "Level 1 / Solvability Hallucination": {
+            "tp": 1,
+            "fp": 0,
+            "tn": 0,
+            "fn": 0,
+            "uncertain_solvable": 0,
+            "uncertain_unsolvable": 0,
+            "no_answer": 0,
+            "solvability_hallucination_rate": 0.0
+        }
+    },
+    "domain_results": {
+        "public_safety": {
+            "sample_count": 1,
+            "level_1": {
+                "exact_match": 1.0,
+                "hallucination_rate": 0.0,
+                "risk_adjusted_score": 1.0,
+                "counts": {
+                    "confident_right": 1,
+                    "confident_wrong": 0,
+                    "uncertain": 0,
+                    "no_answer": 0,
+                    "total": 1
+                }
+            }
+        }
+    },
+    "domain_group_results": {
+        "Government": {
+            "sample_count": 1,
+            "level_1": {
+                "exact_match": 1.0,
+                "hallucination_rate": 0.0,
+                "risk_adjusted_score": 1.0
+            }
+        }
+    }
+}

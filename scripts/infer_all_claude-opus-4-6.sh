@@ -1,5 +1,3 @@
-#!/bin/bash
-
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -7,11 +5,14 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 DATA_DIR="$PROJECT_ROOT/data"
 
 if [ -z "$1" ]; then
-    DATA_PATH="$DATA_DIR/ares_benchmark.json"
+    DATA_PATH="$DATA_DIR/trident_benchmark.json"
     if [ ! -f "$DATA_PATH" ]; then
-        DATA_PATH=$(ls -t "$DATA_DIR"/ares_benchmark_*.json 2>/dev/null | head -1)
+        DATA_PATH="$DATA_DIR/trident_benchmark_full.json"
     fi
-    if [ -z "$DATA_PATH" ]; then
+    if [ ! -f "$DATA_PATH" ]; then
+        DATA_PATH=$(ls -t "$DATA_DIR"/trident_benchmark*.json 2>/dev/null | head -1)
+    fi
+    if [ -z "$DATA_PATH" ] || [ ! -f "$DATA_PATH" ]; then
         echo "Dataset file not found. Check $DATA_DIR."
         exit 1
     fi
@@ -141,4 +142,4 @@ done
 echo "============================================================"
 echo ""
 echo "Next evaluation command:"
-echo "  bash scripts/eval_all.sh $OUTPUT_BASE \"\" $MODEL"
+echo "  bash scripts/eval_all.sh \"$OUTPUT_BASE\" \"\" \"$MODEL\""

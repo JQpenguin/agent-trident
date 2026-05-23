@@ -1,6 +1,5 @@
 
 
-_detecting_zh = "根据 <task> 中的任务描述，判断在 <Agent_role> 定义的角色权限下，当前任务在 <Env> 环境中使用 <provided_tools> 提供的工具是否可以被解决。注意，你需要认真确认 <task> 中的需求、<Agent_role> 中的权限、<Env> 中的数据可用性，以及 <provided_tools> 中的工具能力描述。你无法使用不在 <provided_tools> 中提供的工具，不能违反角色限制，也不能假设 <Env> 中未给出且无法通过工具获取的参数。\n使用 <answer> 和 </answer> 包裹你的最终答案。\n如果你认为当前条件下任务可以被解决，输出 '<answer>solvable</answer>'。\n如果你认为任务不可被解决，输出 '<answer>unsolvable</answer>'。\n如果你对两种判断都没有把握，输出 '<answer>uncertain</answer>'。\n不要在 <answer> 标签之外输出任何内容。"
 
 _detecting_en = """There are some tasks whose solvability is unknown. You need to determine, based on the task description in <task>, whether the agent defined in <Agent_role> can determine if the task can be completed under the current conditions within the <Env> environment using the tools provided in <provided_tools>. Please note that you need to carefully review the requirements in <task>, the permissions in <Agent_role>, the data availability in <Env>, and the capability descriptions of the tools in <provided_tools>. At the same time, you must not use any tools that are not provided, violate role restrictions, or assume any parameters that are neither given in <Env> nor retrievable through the provided tools.
 
@@ -10,7 +9,6 @@ If you believe the task cannot be solved, output '<answer>unsolvable</answer>'.
 If you are not confident in either judgment, output '<answer>uncertain</answer>'.
 Do not output anything else outside of the <answer> tags."""
 
-_planning_zh = "根据 <task> 中的任务描述以及 <provided_tools> 中提供的可用工具进行工具使用的规划。请按顺序列出完成任务时需要使用的工具名，使用 <answer> 和 </answer> 包裹并使用换行符\"\n\"隔开每个工具，例如：\n<answer>Tool1\nTool2\n...\nTooln</answer>\n如果任务的某一步在 <provided_tools> 提供的工具列表中没有可以解决的工具，请在对应步骤使用UnsolvableQuery工具，然后继续列出剩余步骤进行规划，例如：\n<answer>Tool1\n...\nUnsolvableQuery\n...\nTooln</answer>\n如果 <task> 中存在对使用工具数量的限制，在达到限制数量之后的下一步调用UnsolvableQuery来终止任务，例如限制工具数量为t个以内时：\n<answer>Tool1\n...\nToolt\nUnsolvableQuery</answer>\n\n在包裹的答案中，除了工具名之外，不要输出任何多余内容，也不需要对输出进行任何解释。\n你无法使用不在 <provided_tools> 中提供的工具。\n确保每一步骤的工具名都清晰且独立。仅输出你认为最正确的一个答案。"
 
 _planning_en = """Plan your tool usage based on the task description in <task>, the environment description in <Env>, and the available tools provided in <provided_tools>. List the function calls (tool name and arguments) you need to use to complete the task in order, wrapping ALL calls in a single <answer> and </answer> block and placing each call on its own line, e.g.:
 <answer>
@@ -38,7 +36,6 @@ Complete the task as much as possible with the fewest tools."""
 
 
 
-_diagnosing_zh = "请根据 <task> 中的任务描述和 <provided_tool> 中的工具拆分任务并制定一个工具使用的任务规划，要求：\n1. 根据可用工具列表提供的工具进行每一步的任务规划，可能包括多个步骤(t>=1)，每个步骤对应一个子目标和一个工具使用。\n2. 各子目标之间需有逻辑关系，确保子目标的完成推进整体任务进展。\n3. 无法使用不在 <provided_tool> 中的工具\n4. 使用 <answer> 和 </answer> 包裹整个答案\n任务规划的格式请参考如下示例：\n<answer>Subgoal 1: [描述] Planned tool: [工具名]\nSubgoal 2: [描述] Planned tool: [工具名]\n...\nSubgoal t: [描述] Planned tool: [工具名]</answer>\n在[描述]部分阐述子目标和需求之间的关系，在[工具名]的部分提供工具名，不要在[工具名]的部分进行任何的描述或解释。\n\n如果某个子目标因缺乏合适工具无法完成，请描述缺少工具的能力和需要解决的需求，并使用对应不可解决的工具UnsolvableQuery。然后，假设该需求已被完成，并继续规划后续步骤，例如：\n<answer>Subgoal 1: [描述] Planned tool: [工具名]\nSubgoal 2: [对缺少工具的功能描述] Planned tool: UnsovlableQuery\n...\nSubgoal t: [描述] Planned tool: [工具名]</answer>\n如果 <task> 中存在对使用工具数量的限制，在达到限制数量之后的下一步调用UnsolvableQuery来终止任务。例如限制工具数量为t个以内时：\n<answer>Subgoal 1: [description] Planned tool: [tool name]\n...\nSubgoal t: [description] Planned tool: [tool name]\nSubgoal t+1: [Task requires number of tools within t] Planned tool: UnsovlableQuery</answer>\n\n现在，我们开始规划当前任务，使用 <answer> 来标记任务开始，并使用 </answer> 结束任务。"
 
 _diagnosing_en = "Divide the task and develop a task plan for tool usage based on the task description in <task> and the tools in <provided_tool>. Requirements:\n1. Each step of the task planning based on the tools provided in the list of available tools may consist of multiple steps (t>=1), with each step corresponding to a sub-objective and a tool usage. \n2. Sub-objectives need to be logically related to each other to ensure that the completion of sub-objectives advances the overall task progress. \n3. Tools that are not in <provided_tool> cannot be used \n4. Use <answer> and </answer> to wrap the entire answer \nThe format for task planning can be seen in the following example: \n<answer>Subgoal 1: [description] Planned tool: [tool name] \nSubgoal 2: [description ] Planned tool: [tool name]\n... \nSubgoal t: [description] Planned tool: [tool name]</answer>\nState the relationship between the subgoal and the requirement in the [description] section, provide the tool name in the [tool name] section, and don't provide any description or explanation in the [tool name] section. \nIf there is a limit to the number of tools that can be used in a <task>, the next step after the limit is reached calls UnsolvableQuery to terminate the task. For example, to limit the number of tools to t or less: \n<answer>Subgoal 1: [description] Planned tool: [tool name]\n...\nSubgoal t: [description] Planned tool: [tool name]\nSubgoal t+1: [Task requires number of tools within t] Planned tool: UnsovlableQuery</answer>\n\nNow, let's start scheduling the current task, using <answer> to mark the start of the task and </answer> mark the end of the task."
 
@@ -143,7 +140,7 @@ _reflexion_system_prompt_en = """You are an AI agent that can use tools to compl
 7. Complete the task as much as possible with the fewest tools.
 
 ## Self-Improvement:
-You have attempted this task before and failed. The reflections below summarize what went wrong and how to improve. Use them to avoid repeating the same mistakes.
+You have attempted this task before. The reflections below summarize what to preserve or improve. Use them to avoid repeating mistakes and maintain valid tool-use behavior.
 
 {reflections}
 
@@ -166,15 +163,15 @@ Then STOP and wait. The system will provide the Observation.
 
 
 
-_reflexion_self_reflect_prompt_en = """You are an advanced reasoning agent that can improve based on self-reflection. You will be given a previous reasoning trial in which an AI agent attempted to solve a task using tools. The agent was unsuccessful — either it called the wrong tools, used incorrect parameters, failed to complete the task, or produced an incorrect final answer.
+_reflexion_self_reflect_prompt_en = """You are an advanced reasoning agent that can improve based on self-reflection. You will be given a previous reasoning trial in which an AI agent attempted to solve a task using tools. The trial may have succeeded or failed.
 
-Analyze the failed trial carefully:
-1. Identify which specific tool calls were wrong (wrong tool name, wrong parameters, wrong order).
-2. Identify if the agent hallucinated tools or parameter values that don't exist.
-3. Identify if the agent missed necessary tool calls.
-4. Identify if the agent's reasoning was flawed.
+Analyze the trial carefully:
+1. Identify which specific tool calls should be preserved or changed.
+2. Identify any wrong tool names, wrong parameters, wrong order, or hallucinated tool calls.
+3. Identify any missed necessary tool calls.
+4. Identify whether the reasoning should be preserved or corrected.
 
-In a few sentences, diagnose the failure and devise a concise, actionable plan that avoids repeating the same mistakes. Be specific — reference exact tool names and parameter values where possible.
+In a few sentences, provide a concise, actionable plan for the second execution round. Be specific — reference exact tool names and parameter values where possible.
 
 ## Previous Trial:
 

@@ -218,7 +218,7 @@ def _aggregate_l1_confidence_metrics(samples):
 
     confidence_rate = (confident_right + confident_wrong) / total
 
-    ras_score = net_correctness * confidence_rate
+    ras_score = max(0.0, net_correctness * confidence_rate)
 
 
 
@@ -1120,7 +1120,7 @@ def calculate_group_results(metrics):
 
             group_dict["Level 1 Hallucination Rate"] = l1_data.get("hallucination_rate", 0.0)
 
-            group_dict["Level 1 Risk-Adjusted Score"] = l1_data.get("risk_adjusted_score", 0.0)
+            group_dict["Level 1 PSA"] = l1_data.get("risk_adjusted_score", 0.0)
 
             group_dict["Level 1 Counts"] = l1_data.get("counts", {})
 
@@ -1134,7 +1134,7 @@ def calculate_group_results(metrics):
 
             group_dict["Level 2 Task Success (Soft)"] = np.mean(result["task_success_soft"]) if result["task_success_soft"] else 0.0
 
-            group_dict["Level 2 Planning Precision"] = np.mean(result["planning_precision"]) if result["planning_precision"] else 0.0
+            group_dict["Level 2 PPR"] = np.mean(result["planning_precision"]) if result["planning_precision"] else 0.0
 
         if "level_3" in available_levels:
 
@@ -1150,7 +1150,7 @@ def calculate_group_results(metrics):
 
             group_dict["Level 3 Agent Capability Score"] = np.mean(result["agent_capability_score"]) if result["agent_capability_score"] else 0.0
 
-            group_dict["Level 3 Effective Step Utilization"] = np.mean(result["effective_step_utilization"]) if result["effective_step_utilization"] else 0.0
+            group_dict["Level 3 PPR"] = np.mean(result["effective_step_utilization"]) if result["effective_step_utilization"] else 0.0
 
 
 
@@ -1664,7 +1664,7 @@ def print_domain_table(domain_results_dict):
 
                                         round(l1.get('hallucination_rate', 0), 2), sample_count])
 
-                    domain_table.append([display_name, group_name, 'L1 Risk-Adjusted',
+                    domain_table.append([display_name, group_name, 'L1 PSA',
 
                                         round(l1.get('risk_adjusted_score', 0), 2), sample_count])
 
@@ -1696,7 +1696,7 @@ def print_domain_table(domain_results_dict):
 
                                         round(results['level_2']['task_success_soft'], 2), sample_count])
 
-                    domain_table.append([display_name, group_name, 'L2 Planning Precision',
+                    domain_table.append([display_name, group_name, 'L2 PPR',
 
                                         round(results['level_2'].get('planning_precision', 0), 2), sample_count])
 
@@ -1770,7 +1770,7 @@ def print_domain_group_table(group_results_dict):
 
                 group_table.append([group_name, 'L1 Hallu Rate', round(l1.get('hallucination_rate', 0), 2), sample_count])
 
-                group_table.append([group_name, 'L1 Risk-Adjusted', round(l1.get('risk_adjusted_score', 0), 2), sample_count])
+                group_table.append([group_name, 'L1 PSA', round(l1.get('risk_adjusted_score', 0), 2), sample_count])
 
             else:
 
@@ -1790,7 +1790,7 @@ def print_domain_group_table(group_results_dict):
 
                 group_table.append([group_name, 'L2 Task Success (Soft)', round(results['level_2']['task_success_soft'], 2), sample_count])
 
-                group_table.append([group_name, 'L2 Planning Precision', round(results['level_2'].get('planning_precision', 0), 2), sample_count])
+                group_table.append([group_name, 'L2 PPR', round(results['level_2'].get('planning_precision', 0), 2), sample_count])
 
 
 
@@ -1836,7 +1836,7 @@ def print_table(sub_task_results_dict, group_results_dict, analysis_results_dict
 
                 sub_task_table.append([task, 'L1 Hallucination Rate', round(l1.get('hallucination_rate', 0), 2)])
 
-                sub_task_table.append([task, 'L1 Risk-Adjusted Score', round(l1.get('risk_adjusted_score', 0), 2)])
+                sub_task_table.append([task, 'L1 PSA', round(l1.get('risk_adjusted_score', 0), 2)])
 
             else:
 
@@ -1854,7 +1854,7 @@ def print_table(sub_task_results_dict, group_results_dict, analysis_results_dict
 
                 sub_task_table.append([task, 'Level 2 Task Success (Soft)', round(results['level_2']['task_success_soft'], 2)])
 
-                sub_task_table.append([task, 'Level 2 Planning Precision', round(results['level_2'].get('planning_precision', 0), 2)])
+                sub_task_table.append([task, 'Level 2 PPR', round(results['level_2'].get('planning_precision', 0), 2)])
 
             else:
 
@@ -1878,7 +1878,7 @@ def print_table(sub_task_results_dict, group_results_dict, analysis_results_dict
 
                 sub_task_table.append([task, 'Level 3 Agent Capability Score', round(l3.get('agent_capability_score', 0), 2)])
 
-                sub_task_table.append([task, 'Level 3 Effective Step Utilization', round(l3.get('effective_step_utilization', 0), 2)])
+                sub_task_table.append([task, 'Level 3 PPR', round(l3.get('effective_step_utilization', 0), 2)])
 
 
 
