@@ -68,14 +68,7 @@ bash scripts/infer_all_deepseek-v4-pro.sh
 bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json deepseek-v4-pro
 ```
 
-The DeepSeek script uses:
-
-- model: `deepseek-v4-pro`
-- default dataset: `data/trident_benchmark.json`
-- default parallel workers: `10`
-- output directory: `results/infer_results(trident_benchmark)`
-
-To run the full benchmark instead:
+For the full benchmark:
 
 ```bash
 bash scripts/infer_all_deepseek-v4-pro.sh data/trident_benchmark_full.json 10
