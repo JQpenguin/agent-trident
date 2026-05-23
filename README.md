@@ -5,12 +5,12 @@
 </p>
 
 <p align="center">
-  <a href="#-overview">Overview</a> |
-  <a href="#-quick-start-deepseek-v4-pro">Quick Start</a> |
-  <a href="#-data">Data</a> |
-  <a href="#-run-inference">Inference</a> |
-  <a href="#-run-evaluation">Evaluation</a> |
-  <a href="#-project-structure">Structure</a>
+  <a href="#-overview">🧭 Overview</a> |
+  <a href="#-quick-start-deepseek-v4-pro">🚀 Quick Start</a> |
+  <a href="#-data">📦 Data</a> |
+  <a href="#-run-inference">🤖 Inference</a> |
+  <a href="#-run-evaluation">📊 Evaluation</a> |
+  <a href="#-project-structure">🗂️ Structure</a>
 </p>
 
 TRIDENT evaluates whether an agentic model can correctly judge task solvability, plan valid tool calls, and execute tool-use trajectories in a deterministic simulated environment.
@@ -22,18 +22,19 @@ TRIDENT evaluates whether an agentic model can correctly judge task solvability,
 
 ## 📚 Contents
 
-- [Overview](#-overview)
-- [Benchmark Figures](#-benchmark-figures)
-- [Environment Setup](#-environment-setup)
-- [Data](#-data)
-- [Quick Start: DeepSeek v4-pro](#-quick-start-deepseek-v4-pro)
-- [Run Inference](#-run-inference)
-- [Run Evaluation](#-run-evaluation)
-- [Local Open-Source Models with vLLM](#-local-open-source-models-with-vllm)
-- [Project Structure](#-project-structure)
-- [Output Structure](#-output-structure)
-- [Optional Data Generation](#-optional-data-generation)
-- [Troubleshooting](#-troubleshooting)
+- [🧭 Overview](#-overview)
+- [🖼️ Benchmark Figures](#-benchmark-figures)
+- [🛠️ Environment Setup](#-environment-setup)
+- [📦 Data](#-data)
+- [🚀 Quick Start: DeepSeek v4-pro](#-quick-start-deepseek-v4-pro)
+- [🤖 Run Inference](#-run-inference)
+- [📊 Run Evaluation](#-run-evaluation)
+- [🧩 Local Open-Source Models with vLLM](#-local-open-source-models-with-vllm)
+- [🗂️ Project Structure](#-project-structure)
+- [📁 Output Structure](#-output-structure)
+- [🏆 Leaderboard](#-leaderboard)
+- [🧪 Optional Data Generation](#-optional-data-generation)
+- [🩺 Troubleshooting](#-troubleshooting)
 
 ## 🧭 Overview
 
@@ -49,13 +50,9 @@ The benchmark covers seven tool-use structures and twenty application domains. E
 
 ## 🖼️ Benchmark Figures
 
-### Data Construction Pipeline
+### 🏗️ Data Construction Pipeline
 
 ![TRIDENT data construction pipeline](./assets/figures/data-construction-pipeline.png)
-
-### Leaderboard
-
-![TRIDENT model leaderboard](./assets/figures/model-leaderboard.png)
 
 ## 🛠️ Environment Setup
 
@@ -243,6 +240,10 @@ The path contains parentheses, so quote it in shell commands:
 ```bash
 bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json deepseek-v4-pro
 ```
+
+## 🏆 Leaderboard
+
+![TRIDENT model leaderboard](./assets/figures/model-leaderboard.png)
 
 ## 🧪 Optional Data Generation
 
