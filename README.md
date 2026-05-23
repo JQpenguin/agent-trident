@@ -5,10 +5,10 @@ TRIDENT is a benchmark for evaluating tool-use hallucination in agentic systems.
 ## 📌 Table of Contents
 
 - [🧭 Overview](#-overview)
-- [🖼️ Benchmark Figures](#-benchmark-figures)
+- [🔱 TRIDENT Three-Level Diagnostic Framework](#-trident-three-level-diagnostic-framework)
 - [🛠️ Environment Setup](#-environment-setup)
 - [📦 Data](#-data)
-- [🚀 Quick Start: DeepSeek v4-pro](#-quick-start-deepseek-v4-pro)
+- [🚀 Quick Start: GPT-5.4](#-quick-start-gpt-54)
 - [🤖 Run Inference](#-run-inference)
 - [📊 Run Evaluation](#-run-evaluation)
 - [🧩 Local Open-Source Models with vLLM](#-local-open-source-models-with-vllm)
@@ -29,7 +29,7 @@ TRIDENT evaluates tool-use behavior across three levels:
 
 The benchmark is designed around seven tool-use structures and twenty application domains. Each inference script runs Level 1, Level 2, and Level 3 automatically.
 
-##  🔱TRIDENT three-level diagnostic framework
+## 🔱 TRIDENT Three-Level Diagnostic Framework
 
 ![TRIDENT data construction pipeline](./assets/figures/data-construction-pipeline.png)
 
@@ -56,23 +56,23 @@ The repository includes two benchmark files:
 
 You can use `data/trident_benchmark.json` as a 200-sample split for quick testing, or switch to `data/trident_benchmark_full.json` to evaluate on the full benchmark.
 
-## 🚀 Quick Start: DeepSeek v4-pro
+## 🚀 Quick Start: GPT-5.4
 
-Run inference and evaluation with DeepSeek v4-pro:
+Run inference and evaluation with GPT-5.4:
 
 ```bash
-export DEEPSEEK_API_KEY="your_deepseek_api_key"
+export OPENAI_API_KEY="your_openai_api_key"
 
-bash scripts/infer_all_deepseek-v4-pro.sh
+bash scripts/infer_all_gpt-5.4.sh
 
-bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json deepseek-v4-pro
+bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json gpt-5.4
 ```
 
 For the full benchmark:
 
 ```bash
-bash scripts/infer_all_deepseek-v4-pro.sh data/trident_benchmark_full.json 10
-bash scripts/eval_all.sh "results/infer_results(trident_benchmark_full)" data/trident_benchmark_full.json deepseek-v4-pro
+bash scripts/infer_all_gpt-5.4.sh data/trident_benchmark_full.json 10
+bash scripts/eval_all.sh "results/infer_results(trident_benchmark_full)" data/trident_benchmark_full.json gpt-5.4
 ```
 
 ## 🤖 Run Inference
@@ -83,7 +83,6 @@ Available inference scripts:
 | --- | --- | --- |
 | `scripts/infer_all_gpt-5.4.sh` | OpenAI API | `gpt-5.4` |
 | `scripts/infer_all_claude-opus-4-6.sh` | Anthropic API | `claude-opus-4-6` |
-| `scripts/infer_all_deepseek-v4-pro.sh` | DeepSeek API | `deepseek-v4-pro` |
 | `scripts/infer_all_qwen3.5-35b-vllm.sh` | Local vLLM server | `Qwen/Qwen3.5-35B-A3B` |
 | `scripts/infer_all_mistral-7b-vllm.sh` | Local vLLM server | `mistralai/Mistral-7B-Instruct-v0.3` |
 
@@ -97,20 +96,12 @@ export ANTHROPIC_API_KEY="your_anthropic_api_key"
 bash scripts/infer_all_claude-opus-4-6.sh data/trident_benchmark.json 10
 ```
 
-To use DeepSeek v4-flash instead of v4-pro:
-
-```bash
-export DEEPSEEK_MODEL="deepseek-v4-flash"
-export DEEPSEEK_MODEL_NAME_SAVE="deepseek-v4-flash"
-bash scripts/infer_all_deepseek-v4-pro.sh data/trident_benchmark.json 10
-```
-
 ## 📊 Run Evaluation
 
 Evaluate one model:
 
 ```bash
-bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json deepseek-v4-pro
+bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json gpt-5.4
 ```
 
 Evaluate all detected model results:
@@ -164,7 +155,7 @@ export MODEL_NAME_SAVE="qwen3.5-35b-a3b"
 bash scripts/infer_all_qwen3.5-35b-vllm.sh data/trident_benchmark.json 10
 ```
 
-The local vLLM examples use a `4096` token context window. The request output cap is controlled by `VLLM_MAX_TOKENS` and defaults to `1024`, because prompt tokens and output tokens must fit inside the context window together.
+The request output cap follows the paper setting of `4096` tokens. It is controlled by `VLLM_MAX_TOKENS`, so you can lower it for constrained local hardware when prompt tokens and output tokens do not fit in the served context window.
 
 ## 🗂️ Project Structure
 
@@ -206,7 +197,7 @@ results/infer_results(trident_benchmark)/
 The path contains parentheses, so quote it in shell commands:
 
 ```bash
-bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json deepseek-v4-pro
+bash scripts/eval_all.sh "results/infer_results(trident_benchmark)" data/trident_benchmark.json gpt-5.4
 ```
 
 ## 🧪 Build Your Own Dataset
