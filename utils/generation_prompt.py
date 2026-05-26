@@ -1,6 +1,3 @@
-
-
-
 _detecting_en = """There are some tasks whose solvability is unknown. You need to determine, based on the task description in <task>, whether the agent defined in <Agent_role> can determine if the task can be completed under the current conditions within the <Env> environment using the tools provided in <provided_tools>. Please note that you need to carefully review the requirements in <task>, the permissions in <Agent_role>, the data availability in <Env>, and the capability descriptions of the tools in <provided_tools>. At the same time, you must not use any tools that are not provided, violate role restrictions, or assume any parameters that are neither given in <Env> nor retrievable through the provided tools.
 
 Wrap your final answer with <answer> and </answer>.
@@ -35,16 +32,7 @@ Output only ONE <answer>...</answer> block with your best answer. Do NOT use mul
 Complete the task as much as possible with the fewest tools."""
 
 
-
-
 _diagnosing_en = "Divide the task and develop a task plan for tool usage based on the task description in <task> and the tools in <provided_tool>. Requirements:\n1. Each step of the task planning based on the tools provided in the list of available tools may consist of multiple steps (t>=1), with each step corresponding to a sub-objective and a tool usage. \n2. Sub-objectives need to be logically related to each other to ensure that the completion of sub-objectives advances the overall task progress. \n3. Tools that are not in <provided_tool> cannot be used \n4. Use <answer> and </answer> to wrap the entire answer \nThe format for task planning can be seen in the following example: \n<answer>Subgoal 1: [description] Planned tool: [tool name] \nSubgoal 2: [description ] Planned tool: [tool name]\n... \nSubgoal t: [description] Planned tool: [tool name]</answer>\nState the relationship between the subgoal and the requirement in the [description] section, provide the tool name in the [tool name] section, and don't provide any description or explanation in the [tool name] section. \nIf there is a limit to the number of tools that can be used in a <task>, the next step after the limit is reached calls UnsolvableQuery to terminate the task. For example, to limit the number of tools to t or less: \n<answer>Subgoal 1: [description] Planned tool: [tool name]\n...\nSubgoal t: [description] Planned tool: [tool name]\nSubgoal t+1: [Task requires number of tools within t] Planned tool: UnsovlableQuery</answer>\n\nNow, let's start scheduling the current task, using <answer> to mark the start of the task and </answer> mark the end of the task."
-
-
-
-
-
-
-
 
 
 _react_system_prompt_en = """You are an AI agent that can use tools to complete tasks. Use the ReAct (Reasoning + Acting) paradigm to solve the task step by step.
@@ -74,7 +62,6 @@ Then STOP and wait. The system will provide the Observation.
 - Do NOT repeat a tool call you have already made. If you already called a tool and got its Observation, use that result and move on to the next step.
 - Finish MUST be called to end the task (even for unsolvable tasks).
 """
-
 
 
 _react_few_shot_example = """
@@ -121,13 +108,6 @@ Now solve the given task following the same format.
 """
 
 
-
-
-
-
-
-
-
 _reflexion_system_prompt_en = """You are an AI agent that can use tools to complete tasks. Use the ReAct (Reasoning + Acting) paradigm to solve the task step by step.
 
 ## Instructions:
@@ -160,7 +140,6 @@ Then STOP and wait. The system will provide the Observation.
 - Do NOT repeat a tool call you have already made. If you already called a tool and got its Observation, use that result and move on to the next step.
 - Finish MUST be called to end the task (even for unsolvable tasks).
 """
-
 
 
 _reflexion_self_reflect_prompt_en = """You are an advanced reasoning agent that can improve based on self-reflection. You will be given a previous reasoning trial in which an AI agent attempted to solve a task using tools. The trial may have succeeded or failed.
@@ -201,13 +180,6 @@ Final Answer: {final_answer}
 Reflection:"""
 
 
-
-
-
-
-
-
-
 _pte_planner_prompt_en = """You are a task planner. Given a task, an agent role, an environment, and a list of available tools, produce a complete execution plan.
 
 ## Instructions:
@@ -236,7 +208,6 @@ Step N: finish(answer="Step_N-1_Output")
 You MUST output both <reasoning>...</reasoning> and <plan>...</plan> blocks."""
 
 
-
 _pte_executor_prompt_en = """You are a task executor. You are given a plan and must execute the current step by replacing any placeholders with actual values from previous observations.
 
 ## Complete Plan:
@@ -256,4 +227,3 @@ _pte_executor_prompt_en = """You are a task executor. You are given a plan and m
 ## Output Format:
 Thought: <your reasoning about this step, how you resolve placeholders, and why you chose these parameter values>
 Action:"""
-
