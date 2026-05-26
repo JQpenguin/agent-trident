@@ -1853,7 +1853,7 @@ def _calculate_task_grounding(thoughts, task_description, emb_model):
 
     except Exception as e:
 
-        print(f"Warning: Error calculating task grounding: {e}")
+        print(f"Warning: Error calculating task grounding: {type(e).__name__}")
 
         return 0.0
 
@@ -1929,7 +1929,7 @@ def _calculate_reasoning_quality(thoughts, observations, task_description, emb_m
 
     except Exception as e:
 
-        print(f"Warning: Error calculating reasoning quality: {e}")
+        print(f"Warning: Error calculating reasoning quality: {type(e).__name__}")
 
         return 0.0
 

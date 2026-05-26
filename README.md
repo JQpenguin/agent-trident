@@ -180,6 +180,7 @@ TRIDENT/
 ```
 
 `results/`, `tools_emb/`, and Python cache files are generated artifacts and are ignored by `.gitignore`.
+Before sharing an anonymous-review archive, review any intentionally included generated output or terminal log because it may contain local paths, configured endpoints, or unreviewed model text.
 
 ## 📁 Output Structure
 

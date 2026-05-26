@@ -86,7 +86,7 @@ You are a project management assistant with access to project tracking tools.
 
 <Env>
 Current project: PROJ-1050
-User: john.doe
+User: example_user
 </Env>
 
 <provided_tools>
@@ -97,23 +97,23 @@ User: john.doe
 </provided_tools>
 
 <task>
-Check the status of project PROJ-1050 and find all tasks assigned to john.doe.
+Check the status of project PROJ-1050 and find all tasks assigned to example_user.
 </task>
 
 ---
 
-Thought: I need to first check the overall project status, then find tasks assigned to john.doe.
+Thought: I need to first check the overall project status, then find tasks assigned to example_user.
 Action: get_project_status(project_id='PROJ-1050')
 
 Observation: Status: In Progress, Deadline: 2024-03-15
 
-Thought: Project is in progress with deadline March 15. Now I need to get tasks assigned to john.doe.
-Action: get_assigned_tasks(user_id='john.doe', project_id='PROJ-1050')
+Thought: Project is in progress with deadline March 15. Now I need to get tasks assigned to example_user.
+Action: get_assigned_tasks(user_id='example_user', project_id='PROJ-1050')
 
 Observation: [Task-101: Code Review (pending), Task-102: Documentation (in-progress)]
 
-Thought: I have all the information needed. Project PROJ-1050 is in progress and john.doe has 2 tasks assigned.
-Action: finish(answer='Project PROJ-1050 is In Progress with deadline 2024-03-15. John.doe has 2 assigned tasks: Task-101 (Code Review - pending) and Task-102 (Documentation - in-progress).')
+Thought: I have all the information needed. Project PROJ-1050 is in progress and example_user has 2 tasks assigned.
+Action: finish(answer='Project PROJ-1050 is In Progress with deadline 2024-03-15. example_user has 2 assigned tasks: Task-101 (Code Review - pending) and Task-102 (Documentation - in-progress).')
 
 ---
 

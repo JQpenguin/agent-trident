@@ -2161,7 +2161,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
         f.write(overall_table)
 
-    print(f"Saved: {overall_path}")
+    print("Saved overall performance report.")
 
 
 
@@ -2185,7 +2185,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
             f.write(strategy_table)
 
-        print(f"Saved: {strategy_path}")
+        print("Saved strategy comparison report.")
 
 
 
@@ -2205,7 +2205,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
         f.write(scenario_table)
 
-    print(f"Saved: {scenario_path}")
+    print("Saved scenario performance report.")
 
 
 
@@ -2225,7 +2225,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
         f.write(subtask_table)
 
-    print(f"Saved: {subtask_path}")
+    print("Saved subtask performance report.")
 
 
 
@@ -2247,7 +2247,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
             f.write(error_table)
 
-        print(f"Saved: {error_path}")
+        print("Saved error analysis report.")
 
 
 
@@ -2269,7 +2269,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
             f.write(domain_group_table)
 
-        print(f"Saved: {domain_group_path}")
+        print("Saved domain-group performance report.")
 
 
 
@@ -2291,7 +2291,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
             f.write(domain_table)
 
-        print(f"Saved: {domain_path}")
+        print("Saved domain performance report.")
 
 
 
@@ -2303,7 +2303,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
-    print(f"Saved: {json_path}")
+    print("Saved merged summary data.")
 
 
 
@@ -2321,7 +2321,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
     print(f"Calculate Type: {calculate_type}")
 
-    print(f"Output Dir:     {output_dir}")
+    print("Output Dir:     [configured output directory]")
 
     print("=" * 80)
 
@@ -2341,7 +2341,7 @@ def _generate_model_summary(eval_dir, model_name, calculate_type):
 
     print("")
 
-    print(f"Detailed tables saved to: {output_dir}/")
+    print("Detailed tables saved to the configured output directory.")
 
 
 
@@ -2461,7 +2461,7 @@ def generate_leaderboard(results_dir, calculate_type="soft"):
 
     if not rows:
 
-        print(f"No model Summary JSON found in: {results_dir}")
+        print("No model summary JSON found in the configured results directory.")
 
         return
 
@@ -2513,7 +2513,7 @@ def generate_leaderboard(results_dir, calculate_type="soft"):
 
         f.write(table_str + "\n")
 
-    print(f"Leaderboard saved: {output_path}")
+    print("Leaderboard saved.")
 
 
 

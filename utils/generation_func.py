@@ -228,7 +228,7 @@ class GeminiGeneration:
 
             else:
 
-                print(f'Unknown error occurred: {e}')
+                print(f'Gemini request failed: {type(e).__name__}')
 
             return ""
 
@@ -308,7 +308,7 @@ class OpenAIGeneration:
 
         except Exception as e:
 
-            print(f'Unknown error occurred: {e}')
+            print(f'OpenAI request failed: {type(e).__name__}')
 
             return ""
 
@@ -452,7 +452,7 @@ class DeepSeekGeneration:
 
                 delay = self.base_delay * (2 ** attempt)
 
-                print(f'DeepSeek error (attempt {attempt + 1}/{self.max_retries}): {e}')
+                print(f'DeepSeek error (attempt {attempt + 1}/{self.max_retries}): {type(e).__name__}')
 
                 if attempt < self.max_retries - 1:
 
@@ -538,7 +538,7 @@ class NvidiaGeneration:
 
                 delay = self.base_delay * (2 ** attempt)
 
-                print(f'NVIDIA error (attempt {attempt + 1}/{self.max_retries}): {e}')
+                print(f'NVIDIA error (attempt {attempt + 1}/{self.max_retries}): {type(e).__name__}')
 
                 if "429" in str(e) or "rate" in str(e).lower():
 
@@ -612,7 +612,7 @@ class KimiGeneration:
 
         except Exception as e:
 
-            print(f'Kimi error occurred: {e}')
+            print(f'Kimi request failed: {type(e).__name__}')
 
             return ""
 
@@ -688,7 +688,7 @@ class AnthropicGeneration:
 
                 delay = self.base_delay * (2 ** attempt)
 
-                print(f'Anthropic error (attempt {attempt + 1}/{self.max_retries}): {e}')
+                print(f'Anthropic error (attempt {attempt + 1}/{self.max_retries}): {type(e).__name__}')
 
                 if "rate" in str(e).lower() or "429" in str(e):
 
@@ -759,17 +759,13 @@ class VllmGeneration:
                 try:
                     response = resp.json()
                 except ValueError as exc:
-                    preview = resp.text[:500].replace("\n", "\\n")
                     raise RuntimeError(
-                        f"Non-JSON response from vLLM endpoint {self.api_url}: "
-                        f"status={resp.status_code}, content_type={resp.headers.get('content-type')}, "
-                        f"body_preview={preview!r}"
+                        f"Non-JSON response from vLLM endpoint: "
+                        f"status={resp.status_code}, content_type={resp.headers.get('content-type')}"
                     ) from exc
 
                 if resp.status_code >= 400:
-                    raise RuntimeError(
-                        f"HTTP {resp.status_code} from vLLM endpoint {self.api_url}: {response}"
-                    )
+                    raise RuntimeError(f"HTTP {resp.status_code} from vLLM endpoint")
 
 
 
@@ -777,7 +773,7 @@ class VllmGeneration:
 
                 if "error" in response:
 
-                    raise RuntimeError(f"API error: {response['error']}")
+                    raise RuntimeError("API error returned by vLLM endpoint")
 
 
 
@@ -797,9 +793,7 @@ class VllmGeneration:
 
                 if "choices" not in response:
 
-                    raise KeyError(f"'choices' not in response. Keys: {list(response.keys())}. "
-
-                                   f"Response (first 500 chars): {str(response)[:500]}")
+                    raise KeyError("'choices' not found in vLLM response")
 
 
 
@@ -827,7 +821,7 @@ class VllmGeneration:
 
                 delay = self.base_delay * (2 ** attempt)
 
-                print(f'vLLM error (attempt {attempt + 1}/{self.max_retries}): {e}')
+                print(f'vLLM error (attempt {attempt + 1}/{self.max_retries}): {type(e).__name__}')
 
                 if attempt < self.max_retries - 1:
 

@@ -29,7 +29,7 @@ if [ -z "$2" ]; then
         DATA_PATH=$(ls -t "$DATA_DIR"/trident_benchmark*.json 2>/dev/null | head -1)
     fi
     if [ -z "$DATA_PATH" ] || [ ! -f "$DATA_PATH" ]; then
-        echo "Dataset file not found. Check $DATA_DIR."
+        echo "Dataset file not found. Check the project data directory."
         exit 1
     fi
 else
@@ -91,10 +91,10 @@ else
     done
     echo ""
     echo "Pass the model to evaluate as the third argument, for example:"
-    echo "   bash $0 $INFER_DIR \"$DATA_PATH\" ${AVAILABLE_MODELS[0]}"
+    echo "   bash $0 \"<inference-results-dir>\" \"<dataset-path>\" ${AVAILABLE_MODELS[0]}"
     echo ""
     echo "Or evaluate all models at once:"
-    echo "   bash $0 $INFER_DIR \"$DATA_PATH\" all"
+    echo "   bash $0 \"<inference-results-dir>\" \"<dataset-path>\" all"
     exit 1
 fi
 
@@ -112,11 +112,11 @@ DETECTED_STRATEGIES=$(echo "$DETECTED_STRATEGIES" | xargs)
 echo "============================================================"
 echo "TRIDENT three-level evaluation (soft mode)"
 echo "============================================================"
-echo "Inference results directory: $INFER_DIR"
-echo "Dataset path:   $DATA_PATH"
+echo "Inference results directory: [configured input directory]"
+echo "Dataset file:   $(basename "$DATA_PATH")"
 echo "Model:          $MODEL"
 echo "Detected strategies: ${DETECTED_STRATEGIES:-none}"
-echo "Evaluation output:     $INFER_DIR/eval_${MODEL}/"
+echo "Evaluation output:     eval_${MODEL}/"
 echo "============================================================"
 echo ""
 
@@ -172,7 +172,7 @@ for LEVEL in 1 2; do
         --lang en
 
     rm -rf "$TEMP_RESULTS_DIR"
-    echo ">>> Level-$LEVEL evaluation complete: $OUTPUT_DIR/"
+    echo ">>> Level-$LEVEL evaluation complete: eval_${MODEL}/level${LEVEL}/"
 done
 
 if [ -z "$DETECTED_STRATEGIES" ]; then
@@ -210,7 +210,7 @@ else
             --lang en
 
         rm -rf "$TEMP_RESULTS_DIR"
-        echo ">>> Level-3 ($AGENT_STRATEGY) evaluation complete: $OUTPUT_DIR/"
+        echo ">>> Level-3 ($AGENT_STRATEGY) evaluation complete: eval_${MODEL}/level3_${AGENT_STRATEGY}/"
     done
 fi
 
@@ -228,7 +228,7 @@ echo ""
 echo "============================================================"
 echo "Three-level evaluation complete."
 echo "============================================================"
-echo "Evaluation results directory: $EVAL_BASE"
+echo "Evaluation results directory: eval_${MODEL}/"
 echo ""
 echo "Structure:"
 echo "  eval_${MODEL}/"

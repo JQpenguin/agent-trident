@@ -1703,7 +1703,7 @@ def process_all_tasks_infer(items, args, generation_func, results=None):
 
         react_results = load_results(args.react_results_path)
 
-        print(f"Loaded ReAct results from {args.react_results_path} for Reflexion reuse")
+        print("Loaded configured ReAct results for Reflexion reuse.")
 
 
 
@@ -1797,7 +1797,7 @@ def process_all_tasks_infer_parallel(items, args, generation_func, results=None)
 
         react_results = load_results(args.react_results_path)
 
-        print(f"Loaded ReAct results from {args.react_results_path} for Reflexion reuse")
+        print("Loaded configured ReAct results for Reflexion reuse.")
 
 
 
@@ -1899,7 +1899,7 @@ def process_all_tasks_infer_parallel(items, args, generation_func, results=None)
 
                     task, task_item_index = futures[future]
 
-                    print(f"\nError processing task={task}, index={task_item_index}: {e}")
+                    print(f"\nError processing task={task}, index={task_item_index}: {type(e).__name__}")
 
                     pbar.update(1)
 
@@ -2009,7 +2009,7 @@ def process_all_tasks_eval(items, args, results):
 
                 else:
 
-                    print(f"Result not found for task item {task_item} at index {task_item_index}")
+                    print(f"Result not found for task={task}, index={task_item_index}")
 
                     raise Exception("Result not found in eval mode")
 

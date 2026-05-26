@@ -42,9 +42,9 @@ def main():
 
     parser.add_argument("--output_dictory", type=str, default="./results/en")
 
-    parser.add_argument("--results_dictory", type=str, default="./results/20240609/infer_results")
+    parser.add_argument("--results_dictory", type=str, default="./results/infer_results")
 
-    parser.add_argument("--results_path", type=str, default="./results/20240609/infer_results/results_0608_iter_gpt4o.json")
+    parser.add_argument("--results_path", type=str, default="./results/infer_results/results_model.json")
 
     parser.add_argument("--embedding_model", type=str, default="minilm", choices=["minilm", "gemini"])
 
@@ -406,7 +406,7 @@ def main():
 
         if args.mode == "recover":
 
-            print(f"Recovering results from {args.recover_path}")
+            print("Recovering results from the configured input file.")
 
             recover_results = load_results(args.recover_path)
 
@@ -484,11 +484,11 @@ def main():
 
                     json.dump(token_report, f, indent=2)
 
-                print(f"Token usage saved to: {token_path}")
+                print("Token usage report saved.")
 
             except (AttributeError, Exception) as e:
 
-                print(f"Token tracking not available: {e}")
+                print(f"Token tracking not available: {type(e).__name__}")
 
 
 

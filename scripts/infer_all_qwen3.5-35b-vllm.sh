@@ -13,7 +13,7 @@ if [ -z "$1" ]; then
         DATA_PATH=$(ls -t "$DATA_DIR"/trident_benchmark*.json 2>/dev/null | head -1)
     fi
     if [ -z "$DATA_PATH" ] || [ ! -f "$DATA_PATH" ]; then
-        echo "Dataset file not found. Check $DATA_DIR."
+        echo "Dataset file not found. Check the project data directory."
         exit 1
     fi
 else
@@ -42,15 +42,15 @@ OUTPUT_BASE="$PROJECT_ROOT/results/infer_results(${DATASET_NAME})"
 echo "============================================================"
 echo "Provider:       vLLM"
 echo "============================================================"
-echo "Dataset path:   $DATA_PATH"
+echo "Dataset:        $DATASET_NAME"
 echo "Dataset name:   $DATASET_NAME"
 echo "Model:          $MODEL"
 echo "Saved as:       $MODEL_NAME_SAVE"
-echo "vLLM endpoint:  $VLLM_API_URL"
+echo "vLLM endpoint:  [configured endpoint]"
 echo "Max output tokens: $VLLM_MAX_TOKENS"
 echo "Agent strategies: $ALL_STRATEGIES"
 echo "Inference mode: $PARALLEL_DESC"
-echo "Output directory: $OUTPUT_BASE"
+echo "Output directory: results/infer_results(${DATASET_NAME})"
 echo "============================================================"
 echo ""
 
@@ -86,7 +86,7 @@ for LEVEL in 1 2; do
         $PARALLEL_FLAG \
         --lang en
 
-    echo ">>> Level-$LEVEL inference complete: $OUTPUT_DIR/infer_results/"
+    echo ">>> Level-$LEVEL inference complete: results/infer_results(${DATASET_NAME})/level${LEVEL}/infer_results/"
 done
 
 REACT_RESULTS_PATH="${OUTPUT_BASE}/level3_react/infer_results/results_${MODEL_NAME_SAVE}.json"
@@ -120,17 +120,17 @@ for AGENT_STRATEGY in $ALL_STRATEGIES; do
         --lang en \
         $REACT_REUSE_FLAG
 
-    echo ">>> Level-3 ($AGENT_STRATEGY) inference complete: $OUTPUT_DIR/infer_results/"
+    echo ">>> Level-3 ($AGENT_STRATEGY) inference complete: results/infer_results(${DATASET_NAME})/level3_${AGENT_STRATEGY}/infer_results/"
 done
 
 echo ""
 echo "============================================================"
 echo "Three-level inference complete."
 echo "============================================================"
-echo "Output directory: $OUTPUT_BASE"
+echo "Output directory: results/infer_results(${DATASET_NAME})"
 echo ""
 echo "Structure:"
-echo "  $OUTPUT_BASE/"
+echo "  results/infer_results(${DATASET_NAME})/"
 echo "  |-- level1/infer_results/results_${MODEL_NAME_SAVE}.json"
 echo "  |-- level2/infer_results/results_${MODEL_NAME_SAVE}.json"
 for s in $ALL_STRATEGIES; do
@@ -139,5 +139,5 @@ done
 echo "============================================================"
 echo ""
 echo "Next evaluation command:"
-echo "  bash scripts/eval_all.sh \"$OUTPUT_BASE\" \"\" \"$MODEL_NAME_SAVE\""
+echo "  bash scripts/eval_all.sh \"results/infer_results(${DATASET_NAME})\" \"\" \"$MODEL_NAME_SAVE\""
 echo "============================================================"

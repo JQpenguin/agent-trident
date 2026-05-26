@@ -74,8 +74,8 @@ Sample Reference:
       "observation": "IP 192.168.45.101 is flagged in threat intel databases with high risk score."
     },
     "lookup_user_by_ip": {
-      "return_value": "User: john.smith@cybershield.com, Department: Finance, Last Login: 2024-03-15 14:20:00",
-      "observation": "IP 192.168.45.101 was assigned to user john.smith during the alert timeframe."
+      "return_value": "User: example.user@example.com, Department: Finance, Last Login: 2024-03-15 14:20:00",
+      "observation": "IP 192.168.45.101 was assigned to user example.user during the alert timeframe."
     },
     "create_incident_ticket": {
       "return_value": "INC-2024-0892",
@@ -94,8 +94,8 @@ Sample Reference:
     "get_alert_details(alert_id='ALERT-2024-1892')",
     "check_threat_intel(ip_address='192.168.45.101')",
     "lookup_user_by_ip(ip_address='192.168.45.101', time_range='2024-03-15 14:00-15:00')",
-    "create_incident_ticket(title='Brute Force from Malicious IP - User john.smith', severity='High', description='Malicious IP 192.168.45.101 targeting Finance user account')",
-    "finish(result='Investigation complete. Alert ALERT-2024-1892 traced to malicious IP 192.168.45.101 targeting user john.smith. Incident ticket INC-2024-0892 created.')"
+    "create_incident_ticket(title='Brute Force from Malicious IP - User example.user', severity='High', description='Malicious IP 192.168.45.101 targeting Finance user account')",
+    "finish(result='Investigation complete. Alert ALERT-2024-1892 traced to malicious IP 192.168.45.101 targeting user example.user. Incident ticket INC-2024-0892 created.')"
   ],
   "Solvability": "Solvable"
 }

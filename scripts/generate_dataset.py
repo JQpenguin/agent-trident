@@ -57,10 +57,10 @@ class GeminiGeneration:
                 return getattr(response, "text", "") or ""
             except Exception as exc:
                 if attempt == max_retries - 1:
-                    print(f"Generation failed after {max_retries} attempts: {exc}")
+                    print(f"Generation failed after {max_retries} attempts: {type(exc).__name__}")
                     return ""
                 wait_time = 2 * (attempt + 1)
-                print(f"Generation error on attempt {attempt + 1}: {exc}. Retrying in {wait_time}s.")
+                print(f"Generation error on attempt {attempt + 1}: {type(exc).__name__}. Retrying in {wait_time}s.")
                 time.sleep(wait_time)
 
 
@@ -86,10 +86,10 @@ class OpenAIGeneration:
                 return completion.choices[0].message.content or ""
             except Exception as exc:
                 if attempt == max_retries - 1:
-                    print(f"Generation failed after {max_retries} attempts: {exc}")
+                    print(f"Generation failed after {max_retries} attempts: {type(exc).__name__}")
                     return ""
                 wait_time = 2 * (attempt + 1)
-                print(f"Generation error on attempt {attempt + 1}: {exc}. Retrying in {wait_time}s.")
+                print(f"Generation error on attempt {attempt + 1}: {type(exc).__name__}. Retrying in {wait_time}s.")
                 time.sleep(wait_time)
 
 
@@ -115,10 +115,10 @@ class AnthropicGeneration:
                 return "".join(block.text for block in message.content if getattr(block, "type", None) == "text")
             except Exception as exc:
                 if attempt == max_retries - 1:
-                    print(f"Generation failed after {max_retries} attempts: {exc}")
+                    print(f"Generation failed after {max_retries} attempts: {type(exc).__name__}")
                     return ""
                 wait_time = 2 * (attempt + 1)
-                print(f"Generation error on attempt {attempt + 1}: {exc}. Retrying in {wait_time}s.")
+                print(f"Generation error on attempt {attempt + 1}: {type(exc).__name__}. Retrying in {wait_time}s.")
                 time.sleep(wait_time)
 
 
@@ -131,7 +131,7 @@ def extract_sample_content(response):
     match = re.search(r"----Begin sign----\s*(.*?)\s*----End sign----", response, re.DOTALL)
     if not match:
         print("Warning: response did not contain valid sample markers.")
-        print(f"Response preview: {response[:500]}...")
+        print("Response preview omitted from logs.")
         return None
     return match.group(1).strip()
 
@@ -151,7 +151,7 @@ def parse_sample_to_dict(sample_content, domain):
             cleaned = re.sub(r",(\s*[\]}])", r"\1", cleaned)
             parsed = json.loads("{" + cleaned.strip().strip("{}") + "}")
         except Exception as exc:
-            print(f"Warning: failed to parse generated JSON: {exc}")
+            print(f"Warning: failed to parse generated JSON: {type(exc).__name__}")
             return None
     sample = OrderedDict()
     sample["domain"] = domain
@@ -337,7 +337,7 @@ def save_results(output_path, results):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as handle:
         json.dump(results, handle, ensure_ascii=False, indent=2)
-    print(f"Results saved to: {output_path}")
+    print("Generated dataset saved.")
 
 
 def env_key_for_provider(provider):
