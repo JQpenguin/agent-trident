@@ -47,14 +47,17 @@ The provided scripts are Bash scripts. On Windows, run them through WSL, Git Bas
 
 ## 📦 Data
 
-The repository includes two benchmark files:
+The repository includes the following benchmark file:
 
 | File | Description |
 | --- | --- |
-| `data/trident_benchmark.json` | Default 200-sample benchmark file used by the scripts |
-| `data/trident_benchmark_full.json` | Full 1120-sample benchmark split |
+| `data/trident_benchmark.json` | Sanitized 39-sample review subset used by the scripts |
 
-You can use `data/trident_benchmark.json` as a 200-sample split for quick testing, or switch to `data/trident_benchmark_full.json` to evaluate on the full benchmark.
+TRIDENT is a fully synthetic benchmark. All task scenarios, environments, tool definitions, simulated observations, and gold tool-call sequences are generated for research purposes and do not contain real user data, patient data, crowdworker data, or any other real personal information.
+
+Nevertheless, some generated fields may contain realistic-looking placeholders, such as email addresses, file paths, account identifiers, or system paths. Although these fields are synthetic, they could be mistaken for real information or author-identifying metadata during anonymous review. To avoid such confusion and preserve anonymity, we only release a small, manually sanitized 39-sample test subset during the review period.
+
+This subset is intended for reviewer inspection and quick testing of the data format, task structures, and evaluation pipeline. Upon acceptance, we will include the full 1,120-sample benchmark dataset in the public project release.
 
 ## 🚀 Quick Start: GPT-5.4
 
