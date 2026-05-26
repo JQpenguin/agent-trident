@@ -51,13 +51,11 @@ The repository includes the following benchmark file:
 
 | File | Description |
 | --- | --- |
-| `data/trident_benchmark.json` | Sanitized 39-sample review subset used by the scripts |
+| `data/trident_benchmark.json` | Sanitized review subset used by the scripts |
 
-TRIDENT is a fully synthetic benchmark. All task scenarios, environments, tool definitions, simulated observations, and gold tool-call sequences are generated for research purposes and do not contain real user data, patient data, crowdworker data, or any other real personal information.
+TRIDENT is a fully synthetic benchmark. All task scenarios, environments, tool definitions, simulated observations, and gold tool-call sequences are generated for research purposes and do not contain real user data, patient data, crowdworker data, or other real personal information.
 
-Nevertheless, some generated fields may contain realistic-looking placeholders, such as email addresses, file paths, account identifiers, or system paths. Although these fields are synthetic, they could be mistaken for real information or author-identifying metadata during anonymous review. To avoid such confusion and preserve anonymity, we only release a small, manually sanitized 39-sample test subset during the review period.
-
-This subset is intended for reviewer inspection and quick testing of the data format, task structures, and evaluation pipeline. Upon acceptance, we will include the full 1,120-sample benchmark dataset in the public project release.
+During anonymous review, we release a small manually sanitized test subset for reviewer inspection and quick testing. Although the data are synthetic, some generated fields may contain realistic-looking placeholders, such as email addresses, file paths, account identifiers, or system paths, which could be mistaken for real information or author-identifying metadata. The full 1,120-sample benchmark will be included in the public project release upon acceptance.
 
 ## 🚀 Quick Start: GPT-5.4
 
